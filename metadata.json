@@ -1,0 +1,7 @@
+{
+  "name": "Arise Career Craft",
+  "description": "Web app SaaS internal profesional untuk mengelola jasa CV, Resume, Portfolio, Cover Letter, marketplace Shopee, antrian produksi, dan revisi dokumen karier.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

@@ -172,57 +172,61 @@ async function syncFromServerApi() {
     let changed = false;
 
     if (ordersRes && ordersRes.ok) {
-      const serverOrders: Order[] = await ordersRes.json();
-      if (Array.isArray(serverOrders) && serverOrders.length > 0) {
-        const localOrders = storageService.getOrders();
-        const localMap = new Map(localOrders.map((o) => [o.id, o]));
-        let hasNewOrUpdated = false;
+      try {
+        const serverOrders: Order[] = await ordersRes.json();
+        if (Array.isArray(serverOrders) && serverOrders.length > 0) {
+          const localOrders = storageService.getOrders();
+          const localMap = new Map(localOrders.map((o) => [o.id, o]));
+          let hasNewOrUpdated = false;
 
-        serverOrders.forEach((so) => {
-          const lo = localMap.get(so.id);
-          if (!lo) {
-            localOrders.unshift(so);
-            hasNewOrUpdated = true;
-          } else {
-            // Check if server order has newer customer submitted data or edit request status
-            if (
-              so.customerSubmittedAt !== lo.customerSubmittedAt ||
-              so.editRequestStatus !== lo.editRequestStatus ||
-              so.isFormLocked !== lo.isFormLocked ||
-              so.status !== lo.status
-            ) {
-              Object.assign(lo, so);
+          serverOrders.forEach((so) => {
+            const lo = localMap.get(so.id);
+            if (!lo) {
+              localOrders.unshift(so);
               hasNewOrUpdated = true;
+            } else {
+              // Check if server order has newer customer submitted data or edit request status
+              if (
+                so.customerSubmittedAt !== lo.customerSubmittedAt ||
+                so.editRequestStatus !== lo.editRequestStatus ||
+                so.isFormLocked !== lo.isFormLocked ||
+                so.status !== lo.status
+              ) {
+                Object.assign(lo, so);
+                hasNewOrUpdated = true;
+              }
             }
-          }
-        });
+          });
 
-        if (hasNewOrUpdated) {
-          safeLocalStorage.setItem(KEYS.ORDERS, JSON.stringify(localOrders));
-          changed = true;
+          if (hasNewOrUpdated) {
+            safeLocalStorage.setItem(KEYS.ORDERS, JSON.stringify(localOrders));
+            changed = true;
+          }
         }
-      }
+      } catch {}
     }
 
     if (notifsRes && notifsRes.ok) {
-      const serverNotifs: AppNotification[] = await notifsRes.json();
-      if (Array.isArray(serverNotifs) && serverNotifs.length > 0) {
-        const localNotifs = storageService.getNotifications();
-        const localIds = new Set(localNotifs.map((n) => n.id));
-        let addedNotifs = false;
+      try {
+        const serverNotifs: AppNotification[] = await notifsRes.json();
+        if (Array.isArray(serverNotifs) && serverNotifs.length > 0) {
+          const localNotifs = storageService.getNotifications();
+          const localIds = new Set(localNotifs.map((n) => n.id));
+          let addedNotifs = false;
 
-        serverNotifs.forEach((sn) => {
-          if (!localIds.has(sn.id)) {
-            localNotifs.unshift(sn);
-            addedNotifs = true;
+          serverNotifs.forEach((sn) => {
+            if (!localIds.has(sn.id)) {
+              localNotifs.unshift(sn);
+              addedNotifs = true;
+            }
+          });
+
+          if (addedNotifs) {
+            safeLocalStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(localNotifs.slice(0, 50)));
+            changed = true;
           }
-        });
-
-        if (addedNotifs) {
-          safeLocalStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(localNotifs.slice(0, 50)));
-          changed = true;
         }
-      }
+      } catch {}
     }
 
     if (changed) {
@@ -247,8 +251,10 @@ if (typeof window !== 'undefined') {
       }
     } catch {}
 
-    syncFromServerApi();
-    setInterval(syncFromServerApi, 2000);
+    syncFromServerApi().catch(() => {});
+    setInterval(() => {
+      syncFromServerApi().catch(() => {});
+    }, 2000);
   }, 500);
 }
 

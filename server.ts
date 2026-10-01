@@ -165,127 +165,218 @@ app.get('/api/portal/orders/:id', (req, res) => {
   });
 });
 
-app.put('/api/portal/orders/:id/customer-data', (req, res) => {
+const handlePutCustomerData = (req: express.Request, res: express.Response) => {
   const cleanId = (req.params.id || '').trim();
   const token = (req.query.token as string) || (req.body.token as string) || '';
-  if (token && !verifyPortalToken(cleanId, token)) {
+  
+  console.log('[PORTAL_WRITE_START]', {
+    orderId: cleanId,
+    method: 'PUT',
+    path: req.originalUrl,
+    contentType: req.headers['content-type'],
+    userAgent: (req.headers['user-agent'] || '').slice(0, 50)
+  });
+
+  const isAuth = verifyPortalToken(cleanId, token);
+  console.log('[PORTAL_WRITE_AUTH]', {
+    orderId: cleanId,
+    tokenProvided: !!token,
+    authorized: isAuth
+  });
+
+  if (!isAuth) {
+    console.warn('[PORTAL_WRITE_ERROR]', { orderId: cleanId, error: 'Token formulir tidak valid', status: 403 });
     return res.status(403).json({ error: 'Token formulir tidak valid' });
   }
 
   const { customerData, status, isFormLocked } = req.body;
-  const data = loadData();
-  let order = data.orders.find((o) => o.id.toLowerCase() === cleanId.toLowerCase());
-
-  if (!order) {
-    const now = new Date();
-    order = {
-      id: cleanId,
-      customerName: customerData?.fullName || 'Klien Arise Career',
-      customerPhone: customerData?.phone || '0812-0000-0000',
-      customerEmail: customerData?.email || 'klien@gmail.com',
-      productType: 'CV ATS-Friendly',
-      variation: 'Standar',
-      marketplaceOrderId: '',
-      templateId: 'TMP-ATS-01',
-      marketplace: 'Direct Link',
-      orderDate: now.toISOString(),
-      deadlineDate: new Date(now.getTime() + 48 * 3600000).toISOString(),
-      status: status || 'Data Masuk',
-      priority: 'Normal',
-      paymentStatus: 'Lunas',
-      price: 99000,
-      customerData,
-      revisions: [],
-      files: [],
-      isFormLocked: isFormLocked ?? true,
-      editRequestStatus: 'none',
-      customerSubmittedAt: now.toISOString()
-    };
-    data.orders.unshift(order);
-  } else {
-    order.customerData = customerData;
-    if (status) order.status = status;
-    if (isFormLocked !== undefined) order.isFormLocked = isFormLocked;
-    order.editRequestStatus = 'none';
-    order.customerSubmittedAt = new Date().toISOString();
-  }
-
-  const newNotif = {
-    id: `NOTIF-${Date.now()}`,
+  console.log('[PORTAL_WRITE_BODY]', {
     orderId: cleanId,
-    type: 'form_submitted',
-    title: '📥 Data Formulir Masuk (HP/Client)',
-    message: `Klien ${order.customerName} telah melengkapi dan mengirimkan data formulir untuk pesanan ${order.id} (${order.productType}).`,
-    timestamp: new Date().toISOString(),
-    isRead: false,
-    customerName: order.customerName,
-    productType: order.productType
-  };
-  data.notifications.unshift(newNotif);
+    hasCustomerData: !!customerData,
+    customerName: customerData?.fullName || '',
+    status: status || 'default',
+    isFormLocked: isFormLocked ?? true
+  });
 
-  saveData(data);
-  res.json({ success: true, order, notification: newNotif });
-});
+  try {
+    const data = loadData();
+    let order = data.orders.find((o) => o.id.toLowerCase() === cleanId.toLowerCase());
 
-app.post('/api/portal/orders/:id/request-edit', (req, res) => {
+    if (!order) {
+      const now = new Date();
+      order = {
+        id: cleanId,
+        customerName: customerData?.fullName || 'Klien Arise Career',
+        customerPhone: customerData?.phone || '0812-0000-0000',
+        customerEmail: customerData?.email || 'klien@gmail.com',
+        productType: 'CV ATS-Friendly',
+        variation: 'Standar',
+        marketplaceOrderId: '',
+        templateId: 'TMP-ATS-01',
+        marketplace: 'Direct Link',
+        orderDate: now.toISOString(),
+        deadlineDate: new Date(now.getTime() + 48 * 3600000).toISOString(),
+        status: status || 'Data Masuk',
+        priority: 'Normal',
+        paymentStatus: 'Lunas',
+        price: 99000,
+        customerData,
+        revisions: [],
+        files: [],
+        isFormLocked: isFormLocked ?? true,
+        editRequestStatus: 'none',
+        customerSubmittedAt: now.toISOString()
+      };
+      data.orders.unshift(order);
+    } else {
+      order.customerData = customerData;
+      if (status) order.status = status;
+      if (isFormLocked !== undefined) order.isFormLocked = isFormLocked;
+      order.editRequestStatus = 'none';
+      order.customerSubmittedAt = new Date().toISOString();
+    }
+
+    const newNotif = {
+      id: `NOTIF-${Date.now()}`,
+      orderId: cleanId,
+      type: 'form_submitted',
+      title: '📥 Data Formulir Masuk (HP/Client)',
+      message: `Klien ${order.customerName} telah melengkapi dan mengirimkan data formulir untuk pesanan ${order.id} (${order.productType}).`,
+      timestamp: new Date().toISOString(),
+      isRead: false,
+      customerName: order.customerName,
+      productType: order.productType
+    };
+    data.notifications.unshift(newNotif);
+
+    console.log('[PORTAL_WRITE_STORAGE]', {
+      orderId: cleanId,
+      totalOrders: data.orders.length,
+      totalNotifs: data.notifications.length,
+      storagePath: getDataFilePath()
+    });
+
+    saveData(data);
+
+    console.log('[PORTAL_WRITE_SUCCESS]', {
+      orderId: cleanId,
+      orderStatus: order.status,
+      isFormLocked: order.isFormLocked,
+      notificationId: newNotif.id
+    });
+
+    res.json({ success: true, order, notification: newNotif });
+  } catch (err: any) {
+    console.error('[PORTAL_WRITE_ERROR]', { orderId: cleanId, error: err?.message || String(err), status: 500 });
+    res.status(500).json({ error: 'Gagal menyimpan data ke database server' });
+  }
+};
+
+const handlePostRequestEdit = (req: express.Request, res: express.Response) => {
   const cleanId = (req.params.id || '').trim();
   const token = (req.query.token as string) || (req.body.token as string) || '';
-  if (token && !verifyPortalToken(cleanId, token)) {
+
+  console.log('[REQUEST_EDIT_START]', {
+    orderId: cleanId,
+    method: 'POST',
+    path: req.originalUrl,
+    contentType: req.headers['content-type'],
+    userAgent: (req.headers['user-agent'] || '').slice(0, 50)
+  });
+
+  const isAuth = verifyPortalToken(cleanId, token);
+  console.log('[REQUEST_EDIT_AUTH]', {
+    orderId: cleanId,
+    tokenProvided: !!token,
+    authorized: isAuth
+  });
+
+  if (!isAuth) {
+    console.warn('[REQUEST_EDIT_ERROR]', { orderId: cleanId, error: 'Token formulir tidak valid', status: 403 });
     return res.status(403).json({ error: 'Token formulir tidak valid' });
   }
 
   const { reason } = req.body;
-  const data = loadData();
-  let order = data.orders.find((o) => o.id.toLowerCase() === cleanId.toLowerCase());
 
-  if (!order) {
-    const now = new Date();
-    order = {
-      id: cleanId,
-      customerName: 'Klien Arise Career',
-      customerPhone: '0812-0000-0000',
-      customerEmail: 'klien@gmail.com',
-      productType: 'CV ATS-Friendly',
-      variation: 'Standar',
-      marketplaceOrderId: '',
-      templateId: 'TMP-ATS-01',
-      marketplace: 'Direct Link',
-      orderDate: now.toISOString(),
-      deadlineDate: new Date(now.getTime() + 48 * 3600000).toISOString(),
-      status: 'Data Masuk',
-      priority: 'Normal',
-      paymentStatus: 'Lunas',
-      price: 99000,
-      customerData: undefined,
-      revisions: [],
-      files: [],
-      isFormLocked: true,
-      editRequestStatus: 'requested',
-      editRequestReason: reason || 'Klien ingin memperbarui data profil/pengalaman',
-      customerSubmittedAt: now.toISOString()
+  try {
+    const data = loadData();
+    let order = data.orders.find((o) => o.id.toLowerCase() === cleanId.toLowerCase());
+
+    if (!order) {
+      const now = new Date();
+      order = {
+        id: cleanId,
+        customerName: 'Klien Arise Career',
+        customerPhone: '0812-0000-0000',
+        customerEmail: 'klien@gmail.com',
+        productType: 'CV ATS-Friendly',
+        variation: 'Standar',
+        marketplaceOrderId: '',
+        templateId: 'TMP-ATS-01',
+        marketplace: 'Direct Link',
+        orderDate: now.toISOString(),
+        deadlineDate: new Date(now.getTime() + 48 * 3600000).toISOString(),
+        status: 'Data Masuk',
+        priority: 'Normal',
+        paymentStatus: 'Lunas',
+        price: 99000,
+        customerData: undefined,
+        revisions: [],
+        files: [],
+        isFormLocked: true,
+        editRequestStatus: 'requested',
+        editRequestReason: reason || 'Klien ingin memperbarui data profil/pengalaman',
+        customerSubmittedAt: now.toISOString()
+      };
+      data.orders.unshift(order);
+    } else {
+      order.editRequestStatus = 'requested';
+      order.editRequestReason = reason || 'Klien ingin memperbarui data profil/pengalaman';
+    }
+
+    const newNotif = {
+      id: `NOTIF-${Date.now()}`,
+      orderId: cleanId,
+      type: 'edit_requested',
+      title: '🔔 Permintaan Ubah Data dari HP/Klien',
+      message: `Klien ${order.customerName} (#${order.id}) meminta izin ubah data: "${order.editRequestReason}".`,
+      timestamp: new Date().toISOString(),
+      isRead: false,
+      customerName: order.customerName,
+      productType: order.productType
     };
-    data.orders.unshift(order);
-  } else {
-    order.editRequestStatus = 'requested';
-    order.editRequestReason = reason || 'Klien ingin memperbarui data profil/pengalaman';
+    data.notifications.unshift(newNotif);
+
+    console.log('[REQUEST_EDIT_STORAGE]', {
+      orderId: cleanId,
+      reason: order.editRequestReason,
+      storagePath: getDataFilePath()
+    });
+
+    console.log('[REQUEST_EDIT_NOTIFICATION]', {
+      orderId: cleanId,
+      notificationId: newNotif.id,
+      title: newNotif.title
+    });
+
+    saveData(data);
+
+    console.log('[REQUEST_EDIT_SUCCESS]', {
+      orderId: cleanId,
+      editRequestStatus: order.editRequestStatus
+    });
+
+    res.json({ success: true, order, notification: newNotif });
+  } catch (err: any) {
+    console.error('[REQUEST_EDIT_ERROR]', { orderId: cleanId, error: err?.message || String(err), status: 500 });
+    res.status(500).json({ error: 'Gagal memproses permintaan ubah data ke database server' });
   }
+};
 
-  const newNotif = {
-    id: `NOTIF-${Date.now()}`,
-    orderId: cleanId,
-    type: 'edit_requested',
-    title: '🔔 Permintaan Ubah Data dari HP/Klien',
-    message: `Klien ${order.customerName} (#${order.id}) meminta izin ubah data: "${order.editRequestReason}".`,
-    timestamp: new Date().toISOString(),
-    isRead: false,
-    customerName: order.customerName,
-    productType: order.productType
-  };
-  data.notifications.unshift(newNotif);
-
-  saveData(data);
-  res.json({ success: true, order, notification: newNotif });
-});
+app.put('/api/portal/orders/:id/customer-data', handlePutCustomerData);
+app.put('/portal/orders/:id/customer-data', handlePutCustomerData);
+app.post('/api/portal/orders/:id/request-edit', handlePostRequestEdit);
+app.post('/portal/orders/:id/request-edit', handlePostRequestEdit);
 
 // GET all orders
 app.get('/api/orders', (req, res) => {

@@ -18,95 +18,12 @@
       "templateId": "TMP-ATS-01",
       "assignedStaffId": "STF-003",
       "customerData": {
-        "fullName": "Bagas Aditya Pratama, S.Kom.",
+        "fullName": "Bagas Aditya Pratama (Confirmed on PC)",
         "email": "bagas.aditya@gmail.com",
-        "phone": "0812-9844-3210",
-        "experiences": [
-          {
-            "id": "EXP-1",
-            "company": "PT Fintek Karya Nusantara (LinkAja)",
-            "position": "Senior Frontend Engineer",
-            "location": "Jakarta (Hybrid)",
-            "startDate": "2022-03",
-            "endDate": "Sekarang",
-            "isCurrent": true,
-            "bulletPoints": [
-              "Memimpin pengembangan modul Merchant Dashboard yang melayani 250.000+ UMKM harian di seluruh Indonesia.",
-              "Mengimplementasikan optimasi Web Vitals (LCP < 1.2s, CLS 0.01) sehingga menaikkan retention rate sebesar 18%.",
-              "Menyusun reusable Design System berbasis Tailwind CSS dan Storybook yang digunakan lintas 4 tim squad engineering.",
-              "Melakukan code review dan mentoring untuk 6 junior & mid-level frontend engineer secara berkala."
-            ]
-          },
-          {
-            "id": "EXP-2",
-            "company": "PT Global Tiket Network (Tiket.com)",
-            "position": "Frontend Developer",
-            "location": "Jakarta",
-            "startDate": "2020-08",
-            "endDate": "2022-02",
-            "isCurrent": false,
-            "bulletPoints": [
-              "Membangun alur checkout hotel & flight internasional dengan React, Redux Toolkit, dan integrasi Payment Gateway.",
-              "Mengurangi error crash rate hingga 0.05% dengan menerapkan testing terotomasi Jest dan React Testing Library.",
-              "Berkolaborasi erat dengan Product Manager dan UI/UX Designer dalam A/B Testing halaman landing promo."
-            ]
-          }
-        ],
-        "educations": [
-          {
-            "id": "EDU-1",
-            "institution": "Universitas Indonesia",
-            "degree": "Sarjana Komputer (S.Kom.)",
-            "major": "Ilmu Komputer",
-            "startYear": "2017",
-            "endYear": "2021",
-            "gpa": "3.82 / 4.00 (Cum Laude)",
-            "achievements": "Juara 1 National Hackathon Gemastik XIV Kategori Software Development 2020."
-          }
-        ],
-        "skills": [
-          {
-            "id": "SKL-1",
-            "categoryName": "Hard Skills & Frameworks",
-            "skills": [
-              "React.js",
-              "TypeScript",
-              "Next.js",
-              "Tailwind CSS",
-              "GraphQL",
-              "RESTful API",
-              "Redux Toolkit",
-              "Jest"
-            ]
-          },
-          {
-            "id": "SKL-2",
-            "categoryName": "Tools & DevOps",
-            "skills": [
-              "Git & GitHub",
-              "Figma",
-              "Docker (Basic)",
-              "CI/CD Pipeline",
-              "Postman",
-              "Storybook",
-              "Vercel"
-            ]
-          },
-          {
-            "id": "SKL-3",
-            "categoryName": "Soft Skills & Leadership",
-            "skills": [
-              "Agile / Scrum Leadership",
-              "Problem Solving",
-              "Mentoring Tim",
-              "Komunikasi Lintas Divisi",
-              "Time Management"
-            ]
-          }
-        ]
+        "phone": "0812-9844-3210"
       },
       "customerFormSlug": "form-ord-2025-001284",
-      "customerSubmittedAt": "2026-10-01T02:08:09.981Z",
+      "customerSubmittedAt": "2026-10-01T03:00:33.128Z",
       "revisions": [
         {
           "id": "REV-1",
@@ -139,8 +56,8 @@
         }
       ],
       "internalNotes": "Customer minta prioritas sebelum interview hari Rabu jam 10 pagi.",
-      "editRequestStatus": "none",
-      "editRequestReason": "Klien ingin update pengalaman kerja terbaru dari HP",
+      "editRequestStatus": "requested",
+      "editRequestReason": "Klien dari PC ingin revisi",
       "isFormLocked": true
     },
     {
@@ -1157,15 +1074,15 @@
           }
         ],
         "socialLinks": [],
-        "lastUpdated": "2026-10-01T01:45:43.789Z"
+        "lastUpdated": "2026-10-01T02:55:35.263Z"
       },
       "customerFormSlug": "form-ord-2026-001291",
       "revisions": [],
       "files": [],
       "internalNotes": "",
-      "isFormLocked": false,
-      "editRequestStatus": "approved",
-      "customerSubmittedAt": "2026-10-01T01:45:47.491Z",
+      "isFormLocked": true,
+      "editRequestStatus": "none",
+      "customerSubmittedAt": "2026-10-01T02:55:38.976Z",
       "editRequestReason": "Ma kn dnak"
     },
     {
@@ -1269,6 +1186,116 @@
     }
   ],
   "notifications": [
+    {
+      "id": "NOTIF-1790823633343",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_requested",
+      "title": "🔔 Permintaan Ubah Data dari HP/Klien",
+      "message": "Klien Bagas Aditya Pratama (#ORD-2025-001284) meminta izin ubah data: \"Klien dari PC ingin revisi\".",
+      "timestamp": "2026-10-01T03:00:33.343Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790823633198",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_requested",
+      "title": "🔔 Permintaan Ubah Data dari HP/Klien",
+      "message": "Klien Bagas Aditya Pratama (#ORD-2025-001284) meminta izin ubah data: \"Klien dari HP ingin menambahkan sertifikat AWS baru\".",
+      "timestamp": "2026-10-01T03:00:33.198Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790823633128",
+      "orderId": "ORD-2025-001284",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien Bagas Aditya Pratama telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2025-001284 (Paket Komplit (CV + Portfolio + CL)).",
+      "timestamp": "2026-10-01T03:00:33.128Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790823633054",
+      "orderId": "ORD-2025-001284",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien Bagas Aditya Pratama telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2025-001284 (Paket Komplit (CV + Portfolio + CL)).",
+      "timestamp": "2026-10-01T03:00:33.054Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790823609522",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_requested",
+      "title": "🔔 Permintaan Ubah Data dari HP/Klien",
+      "message": "Klien Bagas Aditya Pratama (#ORD-2025-001284) meminta izin ubah data: \"Klien dari PC ingin revisi\".",
+      "timestamp": "2026-10-01T03:00:09.522Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790823609455",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_requested",
+      "title": "🔔 Permintaan Ubah Data dari HP/Klien",
+      "message": "Klien Bagas Aditya Pratama (#ORD-2025-001284) meminta izin ubah data: \"Klien dari HP ingin menambahkan sertifikat AWS baru\".",
+      "timestamp": "2026-10-01T03:00:09.455Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790823609387",
+      "orderId": "ORD-2025-001284",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien Bagas Aditya Pratama telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2025-001284 (Paket Komplit (CV + Portfolio + CL)).",
+      "timestamp": "2026-10-01T03:00:09.387Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790823609316",
+      "orderId": "ORD-2025-001284",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien Bagas Aditya Pratama telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2025-001284 (Paket Komplit (CV + Portfolio + CL)).",
+      "timestamp": "2026-10-01T03:00:09.316Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790823338976",
+      "orderId": "ORD-2026-001291",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien arghar telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2026-001291 (CV ATS-Friendly).",
+      "timestamp": "2026-10-01T02:55:38.976Z",
+      "isRead": false,
+      "customerName": "arghar",
+      "productType": "CV ATS-Friendly"
+    },
+    {
+      "id": "NOTIF-1790823338648",
+      "orderId": "ORD-2026-001291",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien arghar telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2026-001291 (CV ATS-Friendly).",
+      "timestamp": "2026-10-01T02:55:38.648Z",
+      "isRead": false,
+      "customerName": "arghar",
+      "productType": "CV ATS-Friendly"
+    },
     {
       "id": "NOTIF-1790820489981",
       "orderId": "ORD-2025-001284",
@@ -1523,5 +1550,5 @@
       "productType": "Paket Komplit (CV + Portfolio + CL)"
     }
   ],
-  "lastUpdated": "2026-10-01T02:08:09.981Z"
+  "lastUpdated": "2026-10-01T03:00:33.343Z"
 }

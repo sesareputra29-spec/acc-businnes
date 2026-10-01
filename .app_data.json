@@ -1,6 +1,37 @@
 {
   "orders": [
     {
+      "customerData": {
+        "email": "vercel.test@example.com",
+        "fullName": "VERCEL_REAL_DEVICE_TEST_001",
+        "phone": "0812-9999-8888",
+        "summary": "Direct production test verification without UI mock."
+      },
+      "customerEmail": "vercel.test@example.com",
+      "customerName": "VERCEL_REAL_DEVICE_TEST_001",
+      "customerPhone": "0812-9999-8888",
+      "customerSubmittedAt": "2026-10-01T04:57:59.619Z",
+      "deadlineDate": "2026-10-03T04:57:59.619Z",
+      "editRequestStatus": "none",
+      "files": [],
+      "id": "VERCEL-DEBUG-001",
+      "isFormLocked": true,
+      "marketplace": "WhatsApp",
+      "marketplaceOrderId": "",
+      "orderDate": "2026-10-01T04:57:59.619Z",
+      "paymentStatus": "Lunas",
+      "price": 99000,
+      "priority": "Normal",
+      "productType": "CV ATS-Friendly",
+      "revisions": [],
+      "status": "Data Masuk",
+      "templateId": "TMP-ATS-01",
+      "updatedAt": "2026-10-01T04:57:59.619Z",
+      "updatedBy": "HP_CLIENT",
+      "updatedSource": "CLIENT_PORTAL",
+      "variation": "Standar"
+    },
+    {
       "marketplaceOrderId": "24051887KJ92X1",
       "editRequestReason": "Klien meminta pembaruan data via HP",
       "paymentStatus": "Lunas",
@@ -1201,6 +1232,17 @@
   ],
   "notifications": [
     {
+      "id": "NOTIF-1790830679759",
+      "orderId": "VERCEL-DEBUG-001",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien VERCEL_REAL_DEVICE_TEST_001 telah melengkapi dan mengirimkan data formulir untuk pesanan VERCEL-DEBUG-001 (CV ATS-Friendly).",
+      "timestamp": "2026-10-01T04:57:59.619Z",
+      "isRead": false,
+      "customerName": "VERCEL_REAL_DEVICE_TEST_001",
+      "productType": "CV ATS-Friendly"
+    },
+    {
       "id": "NOTIF-1790830097359",
       "orderId": "ORD-2025-001284",
       "type": "form_submitted",
@@ -1663,5 +1705,5 @@
       "productType": "Paket Komplit (CV + Portfolio + CL)"
     }
   ],
-  "lastUpdated": "2026-10-01T04:48:17.438Z"
+  "lastUpdated": "2026-10-01T04:57:59.848Z"
 }

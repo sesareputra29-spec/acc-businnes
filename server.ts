@@ -10,14 +10,39 @@ const port = 3000;
 
 app.use(express.json({ limit: '20mb' }));
 
-// Cross-origin headers for iframe and client requests
+// Cross-origin headers and Cache-Control headers for all requests
 app.use((req, res, next) => {
+  const traceId = (req.headers['x-trace-id'] as string) || `TRACE-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 7)}`;
+  res.setHeader('X-Trace-ID', traceId);
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Trace-ID');
+
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
+
+  if (req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/portal/')) {
+    console.log('[HTTP_REQUEST]', {
+      traceId,
+      method: req.method,
+      path: req.originalUrl,
+      origin: req.headers.origin || '',
+      userAgent: (req.headers['user-agent'] || '').slice(0, 60)
+    });
+
+    res.on('finish', () => {
+      console.log('[HTTP_RESPONSE]', {
+        traceId,
+        status: res.statusCode,
+        path: req.originalUrl
+      });
+    });
+  }
+
   next();
 });
 
@@ -55,15 +80,34 @@ function saveLocalSeed(data: ServerData) {
 }
 
 // REST API Endpoints
-app.get('/api/health', async (req, res) => {
+const handleHealth = async (req: express.Request, res: express.Response) => {
   res.json({
     status: 'ok',
     database: 'Cloud Firestore (Persistent)',
     time: new Date().toISOString()
   });
-});
+};
 
-app.get('/api/debug/firestore', async (req, res) => {
+app.get('/api/health', handleHealth);
+app.get('/health', handleHealth);
+
+// Version debug endpoint
+const handleVersion = (req: express.Request, res: express.Response) => {
+  res.json({
+    commit: 'production-release-v2.1',
+    build: '2026-10-01T04:56:00Z',
+    environment: 'production',
+    storage: 'firestore',
+    projectId: 'arise-career-craft-510204',
+    databaseId: 'ai-studio-arisecareercraft-9fa42135-0cda-4eac-ba4a-adf2dd1804fb'
+  });
+};
+
+app.get('/api/debug/version', handleVersion);
+app.get('/debug/version', handleVersion);
+
+// Firestore connectivity debug endpoint
+const handleDebugFirestore = async (req: express.Request, res: express.Response) => {
   try {
     let ordersReadable = false;
     let notifsReadable = false;
@@ -79,24 +123,28 @@ app.get('/api/debug/firestore', async (req, res) => {
 
     res.json({
       connected: ordersReadable || notifsReadable,
-      projectId: "arise-career-craft-510204",
-      databaseId: "ai-studio-arisecareercraft-9fa42135-0cda-4eac-ba4a-adf2dd1804fb",
+      projectId: 'arise-career-craft-510204',
+      databaseId: 'ai-studio-arisecareercraft-9fa42135-0cda-4eac-ba4a-adf2dd1804fb',
       ordersReadable,
       notificationsReadable: notifsReadable
     });
   } catch (err: any) {
     res.status(500).json({
       connected: false,
-      projectId: "arise-career-craft-510204",
-      databaseId: "ai-studio-arisecareercraft-9fa42135-0cda-4eac-ba4a-adf2dd1804fb",
+      projectId: 'arise-career-craft-510204',
+      databaseId: 'ai-studio-arisecareercraft-9fa42135-0cda-4eac-ba4a-adf2dd1804fb',
       ordersReadable: false,
       notificationsReadable: false,
       error: err?.message || String(err)
     });
   }
-});
+};
 
-app.get('/api/debug/firestore-test', async (req, res) => {
+app.get('/api/debug/firestore', handleDebugFirestore);
+app.get('/debug/firestore', handleDebugFirestore);
+
+// Diagnostic test endpoint (WRITE -> READ-BACK -> DELETE)
+const handleDebugFirestoreTest = async (req: express.Request, res: express.Response) => {
   try {
     const result = await firestoreDb.runDiagnosticTest();
     res.json(result);
@@ -108,14 +156,20 @@ app.get('/api/debug/firestore-test', async (req, res) => {
       error: err?.message || String(err)
     });
   }
-});
+};
 
-app.get('/api/config', (req, res) => {
+app.get('/api/debug/firestore-test', handleDebugFirestoreTest);
+app.get('/debug/firestore-test', handleDebugFirestoreTest);
+
+const handleConfig = (req: express.Request, res: express.Response) => {
   res.json({
     appUrl: process.env.APP_URL || '',
     time: new Date().toISOString()
   });
-});
+};
+
+app.get('/api/config', handleConfig);
+app.get('/config', handleConfig);
 
 function verifyPortalToken(orderId: string, token?: string): boolean {
   if (!token) return true; // Graceful compatibility if token omitted
@@ -214,8 +268,10 @@ app.get('/portal/orders/:id', handleGetPortalOrder);
 const handlePutCustomerData = async (req: express.Request, res: express.Response) => {
   const cleanId = (req.params.id || '').trim();
   const token = (req.query.token as string) || (req.body.token as string) || '';
+  const traceId = res.getHeader('X-Trace-ID');
   
   console.log('[TRACE_CLIENT_SUBMIT]', {
+    traceId,
     orderId: cleanId,
     timestamp: new Date().toISOString(),
     updatedSource: 'CLIENT_PORTAL',
@@ -225,7 +281,7 @@ const handlePutCustomerData = async (req: express.Request, res: express.Response
 
   const isAuth = verifyPortalToken(cleanId, token);
   if (!isAuth) {
-    console.warn('[TRACE_CLIENT_SUBMIT_ERROR]', { orderId: cleanId, error: 'Token formulir tidak valid', status: 403 });
+    console.warn('[TRACE_CLIENT_SUBMIT_ERROR]', { traceId, orderId: cleanId, error: 'Token formulir tidak valid', status: 403 });
     return res.status(403).json({ error: 'Token formulir tidak valid' });
   }
 
@@ -236,6 +292,7 @@ const handlePutCustomerData = async (req: express.Request, res: express.Response
     const result = await firestoreDb.saveCustomerData(cleanId, customerData, status, isFormLocked);
 
     console.log('[TRACE_CLIENT_SUBMIT_SUCCESS]', {
+      traceId,
       orderId: cleanId,
       updatedAt: result.order.updatedAt,
       updatedSource: result.order.updatedSource,
@@ -257,7 +314,7 @@ const handlePutCustomerData = async (req: express.Request, res: express.Response
 
     res.json({ success: true, order: result.order, notification: result.notification });
   } catch (err: any) {
-    console.error('[TRACE_CLIENT_SUBMIT_ERROR]', { orderId: cleanId, error: err?.message || String(err), status: 500 });
+    console.error('[TRACE_CLIENT_SUBMIT_ERROR]', { traceId, orderId: cleanId, error: err?.message || String(err), status: 500 });
     res.status(500).json({ error: 'Gagal menyimpan data ke persistent database' });
   }
 };
@@ -269,8 +326,10 @@ app.put('/portal/orders/:id/customer-data', handlePutCustomerData);
 const handlePostRequestEdit = async (req: express.Request, res: express.Response) => {
   const cleanId = (req.params.id || '').trim();
   const token = (req.query.token as string) || (req.body.token as string) || '';
+  const traceId = res.getHeader('X-Trace-ID');
 
   console.log('[TRACE_EDIT_REQUEST]', {
+    traceId,
     orderId: cleanId,
     timestamp: new Date().toISOString(),
     updatedSource: 'CLIENT_PORTAL',
@@ -280,7 +339,7 @@ const handlePostRequestEdit = async (req: express.Request, res: express.Response
 
   const isAuth = verifyPortalToken(cleanId, token);
   if (!isAuth) {
-    console.warn('[TRACE_EDIT_REQUEST_ERROR]', { orderId: cleanId, error: 'Token formulir tidak valid', status: 403 });
+    console.warn('[TRACE_EDIT_REQUEST_ERROR]', { traceId, orderId: cleanId, error: 'Token formulir tidak valid', status: 403 });
     return res.status(403).json({ error: 'Token formulir tidak valid' });
   }
 
@@ -291,6 +350,7 @@ const handlePostRequestEdit = async (req: express.Request, res: express.Response
     const result = await firestoreDb.requestEdit(cleanId, reason);
 
     console.log('[TRACE_EDIT_REQUEST_SUCCESS]', {
+      traceId,
       orderId: cleanId,
       notificationId: result.notification.id,
       timestamp: result.order.updatedAt,
@@ -311,7 +371,7 @@ const handlePostRequestEdit = async (req: express.Request, res: express.Response
 
     res.json({ success: true, order: result.order, notification: result.notification });
   } catch (err: any) {
-    console.error('[TRACE_EDIT_REQUEST_ERROR]', { orderId: cleanId, error: err?.message || String(err), status: 500 });
+    console.error('[TRACE_EDIT_REQUEST_ERROR]', { traceId, orderId: cleanId, error: err?.message || String(err), status: 500 });
     res.status(500).json({ error: 'Gagal memproses permintaan ubah data ke database' });
   }
 };
@@ -320,9 +380,12 @@ app.post('/api/portal/orders/:id/request-edit', handlePostRequestEdit);
 app.post('/portal/orders/:id/request-edit', handlePostRequestEdit);
 
 // SELLER APPROVES EDIT / UNLOCKS FORM (WITH READ-BACK VERIFICATION)
-app.post('/api/orders/:id/approve-edit', async (req, res) => {
+const handleApproveEdit = async (req: express.Request, res: express.Response) => {
   const cleanId = (req.params.id || '').trim();
+  const traceId = res.getHeader('X-Trace-ID');
+  
   console.log('[TRACE_APPROVAL_WRITE]', {
+    traceId,
     orderId: cleanId,
     timestamp: new Date().toISOString(),
     updatedSource: 'SELLER'
@@ -332,6 +395,7 @@ app.post('/api/orders/:id/approve-edit', async (req, res) => {
     const result = await firestoreDb.approveEdit(cleanId);
     
     console.log('[TRACE_APPROVAL_WRITE_SUCCESS]', {
+      traceId,
       orderId: cleanId,
       editRequestStatus: result.order.editRequestStatus,
       isFormLocked: result.order.isFormLocked,
@@ -349,14 +413,19 @@ app.post('/api/orders/:id/approve-edit', async (req, res) => {
 
     res.json({ success: true, order: result.order, notification: result.notification });
   } catch (err: any) {
-    console.error('[TRACE_APPROVAL_WRITE_ERROR]', err);
+    console.error('[TRACE_APPROVAL_WRITE_ERROR]', { traceId, orderId: cleanId, error: err?.message || String(err) });
     res.status(500).json({ error: err?.message || 'Gagal menyetujui perubahan data' });
   }
-});
+};
+
+app.post('/api/orders/:id/approve-edit', handleApproveEdit);
+app.post('/orders/:id/approve-edit', handleApproveEdit);
 
 // GET ALL ORDERS (SELLER READ)
-app.get('/api/orders', async (req, res) => {
+const handleGetOrders = async (req: express.Request, res: express.Response) => {
+  const traceId = res.getHeader('X-Trace-ID');
   console.log('[TRACE_SELLER_LOAD]', {
+    traceId,
     timestamp: new Date().toISOString(),
     action: 'READ_ONLY',
     target: 'Cloud Firestore orders collection'
@@ -373,10 +442,13 @@ app.get('/api/orders', async (req, res) => {
     console.error('[GET_ORDERS_ERROR]', err);
     res.json(loadLocalSeed().orders);
   }
-});
+};
+
+app.get('/api/orders', handleGetOrders);
+app.get('/orders', handleGetOrders);
 
 // GET SINGLE ORDER (SELLER)
-app.get('/api/orders/:id', async (req, res) => {
+const handleGetOrderById = async (req: express.Request, res: express.Response) => {
   const cleanId = (req.params.id || '').trim();
   try {
     let order = await firestoreDb.getOrderById(cleanId);
@@ -395,10 +467,13 @@ app.get('/api/orders/:id', async (req, res) => {
     if (order) return res.json(order);
     res.status(500).json({ error: 'Gagal mengambil data pesanan' });
   }
-});
+};
+
+app.get('/api/orders/:id', handleGetOrderById);
+app.get('/orders/:id', handleGetOrderById);
 
 // POST CREATE ORDER (SELLER)
-app.post('/api/orders', async (req, res) => {
+const handlePostOrder = async (req: express.Request, res: express.Response) => {
   const newOrder = req.body;
   if (!newOrder.id) {
     return res.status(400).json({ error: 'Order ID is required' });
@@ -416,10 +491,13 @@ app.post('/api/orders', async (req, res) => {
     console.error('[CREATE_ORDER_ERROR]', err);
     res.status(500).json({ error: 'Gagal membuat pesanan di database' });
   }
-});
+};
+
+app.post('/api/orders', handlePostOrder);
+app.post('/orders', handlePostOrder);
 
 // POST BATCH SYNC ORDERS (Safe: only inserts non-existing orders, never overwrites existing modified orders)
-app.post('/api/orders/batch-sync', async (req, res) => {
+const handleBatchSync = async (req: express.Request, res: express.Response) => {
   const incomingOrders = req.body.orders || [];
   try {
     for (const ord of incomingOrders) {
@@ -433,11 +511,16 @@ app.post('/api/orders/batch-sync', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Batch sync failed' });
   }
-});
+};
+
+app.post('/api/orders/batch-sync', handleBatchSync);
+app.post('/orders/batch-sync', handleBatchSync);
 
 // GET ALL NOTIFICATIONS (SELLER READ)
-app.get('/api/notifications', async (req, res) => {
+const handleGetNotifications = async (req: express.Request, res: express.Response) => {
+  const traceId = res.getHeader('X-Trace-ID');
   console.log('[TRACE_NOTIFICATION_READ]', {
+    traceId,
     timestamp: new Date().toISOString(),
     action: 'READ_ONLY',
     target: 'Cloud Firestore notifications collection'
@@ -453,10 +536,13 @@ app.get('/api/notifications', async (req, res) => {
     console.error('[GET_NOTIFS_ERROR]', err);
     res.json(loadLocalSeed().notifications);
   }
-});
+};
+
+app.get('/api/notifications', handleGetNotifications);
+app.get('/notifications', handleGetNotifications);
 
 // PUT MARK NOTIFICATION READ
-app.put('/api/notifications/:id/read', async (req, res) => {
+const handleMarkNotificationRead = async (req: express.Request, res: express.Response) => {
   const { id } = req.params;
   try {
     await firestoreDb.markNotificationRead(id);
@@ -464,17 +550,23 @@ app.put('/api/notifications/:id/read', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Failed to update notification' });
   }
-});
+};
+
+app.put('/api/notifications/:id/read', handleMarkNotificationRead);
+app.put('/notifications/:id/read', handleMarkNotificationRead);
 
 // PUT MARK ALL NOTIFICATIONS READ
-app.put('/api/notifications/read-all', async (req, res) => {
+const handleMarkAllNotificationsRead = async (req: express.Request, res: express.Response) => {
   try {
     await firestoreDb.markAllNotificationsRead();
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Failed to mark all notifications read' });
   }
-});
+};
+
+app.put('/api/notifications/read-all', handleMarkAllNotificationsRead);
+app.put('/notifications/read-all', handleMarkAllNotificationsRead);
 
 // Start Vite middleware in dev or static in production
 async function startServer() {
@@ -492,7 +584,7 @@ async function startServer() {
 
     // Serve index.html transformed by Vite for all non-API GET routes
     app.use('*', async (req, res, next) => {
-      if (req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/portal/')) {
+      if (req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/portal/') || req.originalUrl.startsWith('/debug/')) {
         return next();
       }
       try {

@@ -187,16 +187,16 @@ export const StandaloneClientPortal: React.FC<Props> = ({
                   serverOrder.customerPhone
                 );
                 return {
-                  ...normalized,
                   ...prev,
+                  ...normalized,
                   lastUpdated: serverOrder.customerData?.lastUpdated || prev.lastUpdated,
-                  educations: normalized.educations.length > 0 ? normalized.educations : (prev.educations || []),
-                  experiences: normalized.experiences.length > 0 ? normalized.experiences : (prev.experiences || []),
-                  skills: normalized.skills.length > 0 ? normalized.skills : (prev.skills || []),
-                  languages: normalized.languages.length > 0 ? normalized.languages : (prev.languages || []),
-                  certifications: normalized.certifications.length > 0 ? normalized.certifications : (prev.certifications || []),
-                  projects: normalized.projects.length > 0 ? normalized.projects : (prev.projects || []),
-                  socialLinks: normalized.socialLinks.length > 0 ? normalized.socialLinks : (prev.socialLinks || [])
+                  educations: normalized.educations && normalized.educations.length > 0 ? normalized.educations : (prev.educations || []),
+                  experiences: normalized.experiences && normalized.experiences.length > 0 ? normalized.experiences : (prev.experiences || []),
+                  skills: normalized.skills && normalized.skills.length > 0 ? normalized.skills : (prev.skills || []),
+                  languages: normalized.languages && normalized.languages.length > 0 ? normalized.languages : (prev.languages || []),
+                  certifications: normalized.certifications && normalized.certifications.length > 0 ? normalized.certifications : (prev.certifications || []),
+                  projects: normalized.projects && normalized.projects.length > 0 ? normalized.projects : (prev.projects || []),
+                  socialLinks: normalized.socialLinks && normalized.socialLinks.length > 0 ? normalized.socialLinks : (prev.socialLinks || [])
                 };
               });
             }

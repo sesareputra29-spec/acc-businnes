@@ -258,14 +258,22 @@ const handlePutCustomerData = (req: express.Request, res: express.Response) => {
 
     saveData(data);
 
+    // Read-back verification from storage to guarantee data was written
+    const verifiedData = loadData();
+    const verifiedOrder = verifiedData.orders.find((o) => o.id.toLowerCase() === cleanId.toLowerCase());
+    if (!verifiedOrder) {
+      throw new Error('Read-back verification failed: order was not written to storage');
+    }
+
     console.log('[PORTAL_WRITE_SUCCESS]', {
       orderId: cleanId,
       orderStatus: order.status,
       isFormLocked: order.isFormLocked,
-      notificationId: newNotif.id
+      notificationId: newNotif.id,
+      verified: true
     });
 
-    res.json({ success: true, order, notification: newNotif });
+    res.json({ success: true, order: verifiedOrder, notification: newNotif });
   } catch (err: any) {
     console.error('[PORTAL_WRITE_ERROR]', { orderId: cleanId, error: err?.message || String(err), status: 500 });
     res.status(500).json({ error: 'Gagal menyimpan data ke database server' });
@@ -361,12 +369,21 @@ const handlePostRequestEdit = (req: express.Request, res: express.Response) => {
 
     saveData(data);
 
+    // Read-back verification from storage to guarantee data and notification were written
+    const verifiedData = loadData();
+    const verifiedOrder = verifiedData.orders.find((o) => o.id.toLowerCase() === cleanId.toLowerCase());
+    const verifiedNotif = verifiedData.notifications.find((n) => n.id === newNotif.id);
+    if (!verifiedOrder || !verifiedNotif) {
+      throw new Error('Read-back verification failed: order or notification was not written to storage');
+    }
+
     console.log('[REQUEST_EDIT_SUCCESS]', {
       orderId: cleanId,
-      editRequestStatus: order.editRequestStatus
+      editRequestStatus: order.editRequestStatus,
+      verified: true
     });
 
-    res.json({ success: true, order, notification: newNotif });
+    res.json({ success: true, order: verifiedOrder, notification: verifiedNotif });
   } catch (err: any) {
     console.error('[REQUEST_EDIT_ERROR]', { orderId: cleanId, error: err?.message || String(err), status: 500 });
     res.status(500).json({ error: 'Gagal memproses permintaan ubah data ke database server' });

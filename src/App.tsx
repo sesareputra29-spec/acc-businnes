@@ -27,29 +27,56 @@ import { CreateOrderModal } from './components/orders/CreateOrderModal';
 import { OrderDetailDrawer } from './components/orders/OrderDetailDrawer';
 import { StandaloneClientPortal } from './components/customerForm/StandaloneClientPortal';
 
-import { Order, DocumentTemplate, StaffMember, ShopeeProduct, ShopeeSyncLog, UserRole } from './types';
+import { Order, DocumentTemplate, StaffMember, ShopeeProduct, ShopeeSyncLog, UserRole, CustomerProfile } from './types';
 import { storageService } from './services/storage';
+import { PortalErrorBoundary } from './components/common/PortalErrorBoundary';
 
 export default function App() {
-  // Check if URL specifies client form mode
-  const [clientOrderId, setClientOrderId] = useState<string | null>(() => {
+  const parseClientOrderIdFromUrl = (): string | null => {
     if (typeof window === 'undefined') return null;
     const params = new URLSearchParams(window.location.search);
     const formParam = params.get('client_form') || params.get('form') || params.get('orderId');
-    if (formParam) return formParam;
+    if (formParam) return formParam.trim().replace(/\/+$/, '');
 
     const hash = window.location.hash;
-    if (hash.includes('client_form=') || hash.includes('form=')) {
-      const hashParams = new URLSearchParams(hash.replace(/^#/, ''));
-      return hashParams.get('client_form') || hashParams.get('form') || hashParams.get('orderId');
+    if (hash.includes('client_form=') || hash.includes('form=') || hash.includes('orderId=')) {
+      const hashQuery = hash.includes('?') ? hash.split('?')[1] : hash.replace(/^#\/?/, '');
+      const hashParams = new URLSearchParams(hashQuery);
+      const val = hashParams.get('client_form') || hashParams.get('form') || hashParams.get('orderId');
+      if (val) return val.trim().replace(/\/+$/, '');
     }
 
-    if (window.location.pathname.startsWith('/form-')) {
-      return window.location.pathname.replace('/form-', '');
+    const path = window.location.pathname;
+    if (path.startsWith('/form-')) {
+      return decodeURIComponent(path.replace('/form-', '')).trim().replace(/\/+$/, '');
+    }
+    if (path.startsWith('/form/')) {
+      return decodeURIComponent(path.replace('/form/', '')).trim().replace(/\/+$/, '');
+    }
+    if (path.startsWith('/portal/')) {
+      return decodeURIComponent(path.replace('/portal/', '')).trim().replace(/\/+$/, '');
     }
 
     return null;
-  });
+  };
+
+  // Check if URL specifies client form mode
+  const [clientOrderId, setClientOrderId] = useState<string | null>(() => parseClientOrderIdFromUrl());
+
+  useEffect(() => {
+    const handleUrlChange = () => {
+      const detected = parseClientOrderIdFromUrl();
+      if (detected !== clientOrderId) {
+        setClientOrderId(detected);
+      }
+    };
+    window.addEventListener('popstate', handleUrlChange);
+    window.addEventListener('hashchange', handleUrlChange);
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+      window.removeEventListener('hashchange', handleUrlChange);
+    };
+  }, [clientOrderId]);
 
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -66,6 +93,7 @@ export default function App() {
   const [isCreateOrderOpen, setIsCreateOrderOpen] = useState(false);
   const [selectedOrderDetail, setSelectedOrderDetail] = useState<Order | null>(null);
   const [builderActiveOrder, setBuilderActiveOrder] = useState<Order | null>(null);
+  const [preselectedCustomer, setPreselectedCustomer] = useState<CustomerProfile | null>(null);
 
   // Toast notification
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -109,10 +137,23 @@ export default function App() {
     setCurrentRole(role);
   };
 
-  const handleOpenCvBuilderWithOrder = (order: Order) => {
+  const handleOpenCvBuilderWithOrder = (order: Order, preferredTab?: NavTab) => {
     setBuilderActiveOrder(order);
     setSelectedOrderDetail(null);
-    setActiveTab('cv-builder');
+    if (preferredTab) {
+      setActiveTab(preferredTab);
+      return;
+    }
+    // Intelligent builder routing based on product
+    if (order.productType === 'Portfolio Profesional') {
+      setActiveTab('portfolio-builder');
+    } else if (order.productType === 'Cover Letter / Surat Lamaran') {
+      setActiveTab('cover-letter');
+    } else if (order.productType === 'Optimasi Profil LinkedIn') {
+      setActiveTab('dokumen-lainnya');
+    } else {
+      setActiveTab('cv-builder');
+    }
   };
 
   const handleOpenCustomerFormPortal = (order: Order) => {
@@ -122,8 +163,21 @@ export default function App() {
   };
 
   const handleSelectTemplateForBuilder = (tpl: DocumentTemplate) => {
-    setActiveTab('cv-builder');
-    showToast(`Template "${tpl.name}" dibuka di CV Builder`);
+    if (builderActiveOrder) {
+      const updated = { ...builderActiveOrder, templateId: tpl.id };
+      storageService.updateOrder(updated);
+      setBuilderActiveOrder(updated);
+    }
+    if (tpl.category === 'Portfolio') {
+      setActiveTab('portfolio-builder');
+      showToast(`Template "${tpl.name}" diterapkan ke Portfolio Builder.`);
+    } else if (tpl.category === 'CoverLetter') {
+      setActiveTab('cover-letter');
+      showToast(`Template "${tpl.name}" diterapkan ke Cover Letter Generator.`);
+    } else {
+      setActiveTab('cv-builder');
+      showToast(`Template "${tpl.name}" diterapkan ke CV Builder.`);
+    }
   };
 
   // Badges calculations
@@ -156,26 +210,28 @@ export default function App() {
   // If URL points to public standalone client portal
   if (clientOrderId) {
     return (
-      <div className="min-h-screen bg-slate-100">
-        <StandaloneClientPortal
-          orderId={clientOrderId}
-          onExitStandalone={() => {
-            const url = new URL(window.location.href);
-            url.searchParams.delete('client_form');
-            url.searchParams.delete('form');
-            url.searchParams.delete('orderId');
-            window.history.replaceState({}, '', url.pathname);
-            setClientOrderId(null);
-          }}
-          onShowToast={showToast}
-        />
-        {toastMessage && (
-          <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl border border-slate-700 text-xs font-medium flex items-center gap-2.5 animate-in fade-in slide-in-from-bottom-3 duration-200">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
-            <span>{toastMessage}</span>
-          </div>
-        )}
-      </div>
+      <PortalErrorBoundary orderId={clientOrderId}>
+        <div className="min-h-screen bg-slate-100">
+          <StandaloneClientPortal
+            orderId={clientOrderId}
+            onExitStandalone={() => {
+              const url = new URL(window.location.href);
+              url.searchParams.delete('client_form');
+              url.searchParams.delete('form');
+              url.searchParams.delete('orderId');
+              window.history.replaceState({}, '', url.pathname);
+              setClientOrderId(null);
+            }}
+            onShowToast={showToast}
+          />
+          {toastMessage && (
+            <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl border border-slate-700 text-xs font-medium flex items-center gap-2.5 animate-in fade-in slide-in-from-bottom-3 duration-200">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+              <span>{toastMessage}</span>
+            </div>
+          )}
+        </div>
+      </PortalErrorBoundary>
     );
   }
 
@@ -247,6 +303,10 @@ export default function App() {
                 orders={orders}
                 onSelectOrder={(order) => setSelectedOrderDetail(order)}
                 onOpenCustomerFormPortal={handleOpenCustomerFormPortal}
+                onOpenCreateOrderWithCustomer={(customer) => {
+                  setPreselectedCustomer(customer);
+                  setIsCreateOrderOpen(true);
+                }}
                 onShowToast={showToast}
               />
             )}
@@ -278,20 +338,25 @@ export default function App() {
 
             {activeTab === 'portfolio-builder' && (
               <PortfolioBuilderView
+                activeOrder={builderActiveOrder}
                 allOrders={orders}
+                templates={templates}
                 onShowToast={showToast}
               />
             )}
 
             {activeTab === 'cover-letter' && (
               <CoverLetterBuilderView
+                activeOrder={builderActiveOrder}
                 allOrders={orders}
+                templates={templates}
                 onShowToast={showToast}
               />
             )}
 
             {activeTab === 'dokumen-lainnya' && (
               <OtherDocsView
+                activeOrder={builderActiveOrder}
                 allOrders={orders}
                 onShowToast={showToast}
               />
@@ -353,8 +418,12 @@ export default function App() {
       {/* Global Modals & Drawers */}
       <CreateOrderModal
         isOpen={isCreateOrderOpen}
-        onClose={() => setIsCreateOrderOpen(false)}
+        onClose={() => {
+          setIsCreateOrderOpen(false);
+          setPreselectedCustomer(null);
+        }}
         templates={templates}
+        preselectedCustomer={preselectedCustomer}
         onOrderCreated={(newOrder) => {
           setSelectedOrderDetail(newOrder);
         }}

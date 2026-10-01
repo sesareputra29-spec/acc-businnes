@@ -58,6 +58,211 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
+app.get('/api/config', (req, res) => {
+  res.json({
+    appUrl: process.env.APP_URL || '',
+    time: new Date().toISOString()
+  });
+});
+
+function verifyPortalToken(orderId: string, token?: string): boolean {
+  if (!token) return true; // Graceful compatibility if token omitted
+  let hash = 0;
+  const str = `arise_craft_${orderId.trim()}_portal_v1`;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+  const expected = Math.abs(hash).toString(36).padStart(8, '0');
+  return token.trim() === expected;
+}
+
+// CLIENT PORTAL AUTHORIZED ENDPOINTS (For clients on mobile HP / WhatsApp without Admin login)
+app.get('/api/portal/orders/:id', (req, res) => {
+  const cleanId = (req.params.id || '').trim();
+  const token = (req.query.token as string) || '';
+  if (token && !verifyPortalToken(cleanId, token)) {
+    return res.status(403).json({ error: 'Token formulir tidak valid' });
+  }
+
+  const data = loadData();
+  const order = data.orders.find((o) => o.id.toLowerCase() === cleanId.toLowerCase());
+  if (!order) {
+    return res.status(404).json({ error: 'Pesanan tidak ditemukan' });
+  }
+
+  // Filter client response for security (do not expose supplier costs or staff margins)
+  const rawCd = order.customerData || {};
+  const safeCustomerData = {
+    id: rawCd.id || `CUST-${order.id}`,
+    fullName: rawCd.fullName || order.customerName || '',
+    professionalTitle: rawCd.professionalTitle || '',
+    email: rawCd.email || order.customerEmail || '',
+    phone: rawCd.phone || order.customerPhone || '',
+    city: rawCd.city || '',
+    country: rawCd.country || 'Indonesia',
+    summary: rawCd.summary || '',
+    targetJobTitle: rawCd.targetJobTitle || '',
+    targetCompany: rawCd.targetCompany || '',
+    jobVacancySource: rawCd.jobVacancySource || '',
+    coverLetterNotes: rawCd.coverLetterNotes || '',
+    photoUrl: rawCd.photoUrl || undefined,
+    educations: Array.isArray(rawCd.educations) ? rawCd.educations : [],
+    experiences: Array.isArray(rawCd.experiences) ? rawCd.experiences : [],
+    skills: Array.isArray(rawCd.skills) && rawCd.skills.length > 0 ? rawCd.skills : [
+      { id: 'SKL-1', categoryName: 'Hard Skills & Tools', skills: [] },
+      { id: 'SKL-2', categoryName: 'Soft Skills', skills: [] }
+    ],
+    certifications: Array.isArray(rawCd.certifications) ? rawCd.certifications : [],
+    projects: Array.isArray(rawCd.projects) ? rawCd.projects : [],
+    languages: Array.isArray(rawCd.languages) && rawCd.languages.length > 0 ? rawCd.languages : [
+      { id: 'LNG-1', language: 'Bahasa Indonesia', proficiency: 'Penutur Asli' },
+      { id: 'LNG-2', language: 'Bahasa Inggris', proficiency: 'Profesional' }
+    ],
+    socialLinks: Array.isArray(rawCd.socialLinks) ? rawCd.socialLinks : [],
+    lastUpdated: rawCd.lastUpdated || new Date().toISOString()
+  };
+
+  res.json({
+    id: order.id,
+    customerName: order.customerName,
+    customerPhone: order.customerPhone,
+    customerEmail: order.customerEmail,
+    productType: order.productType,
+    variation: order.variation,
+    deadlineDate: order.deadlineDate,
+    status: order.status,
+    customerData: safeCustomerData,
+    isFormLocked: order.isFormLocked,
+    editRequestStatus: order.editRequestStatus,
+    editRequestReason: order.editRequestReason,
+    customerSubmittedAt: order.customerSubmittedAt
+  });
+});
+
+app.put('/api/portal/orders/:id/customer-data', (req, res) => {
+  const cleanId = (req.params.id || '').trim();
+  const token = (req.query.token as string) || (req.body.token as string) || '';
+  if (token && !verifyPortalToken(cleanId, token)) {
+    return res.status(403).json({ error: 'Token formulir tidak valid' });
+  }
+
+  const { customerData, status, isFormLocked } = req.body;
+  const data = loadData();
+  let order = data.orders.find((o) => o.id.toLowerCase() === cleanId.toLowerCase());
+
+  if (!order) {
+    const now = new Date();
+    order = {
+      id: cleanId,
+      customerName: customerData?.fullName || 'Klien Arise Career',
+      customerPhone: customerData?.phone || '0812-0000-0000',
+      customerEmail: customerData?.email || 'klien@gmail.com',
+      productType: 'CV ATS-Friendly',
+      variation: 'Standar',
+      marketplaceOrderId: '',
+      templateId: 'TMP-ATS-01',
+      marketplace: 'Direct Link',
+      orderDate: now.toISOString(),
+      deadlineDate: new Date(now.getTime() + 48 * 3600000).toISOString(),
+      status: status || 'Data Masuk',
+      priority: 'Normal',
+      paymentStatus: 'Lunas',
+      price: 99000,
+      customerData,
+      revisions: [],
+      files: [],
+      isFormLocked: isFormLocked ?? true,
+      editRequestStatus: 'none',
+      customerSubmittedAt: now.toISOString()
+    };
+    data.orders.unshift(order);
+  } else {
+    order.customerData = customerData;
+    if (status) order.status = status;
+    if (isFormLocked !== undefined) order.isFormLocked = isFormLocked;
+    order.editRequestStatus = 'none';
+    order.customerSubmittedAt = new Date().toISOString();
+  }
+
+  const newNotif = {
+    id: `NOTIF-${Date.now()}`,
+    orderId: cleanId,
+    type: 'form_submitted',
+    title: '📥 Data Formulir Masuk (HP/Client)',
+    message: `Klien ${order.customerName} telah melengkapi dan mengirimkan data formulir untuk pesanan ${order.id} (${order.productType}).`,
+    timestamp: new Date().toISOString(),
+    isRead: false,
+    customerName: order.customerName,
+    productType: order.productType
+  };
+  data.notifications.unshift(newNotif);
+
+  saveData(data);
+  res.json({ success: true, order, notification: newNotif });
+});
+
+app.post('/api/portal/orders/:id/request-edit', (req, res) => {
+  const cleanId = (req.params.id || '').trim();
+  const token = (req.query.token as string) || (req.body.token as string) || '';
+  if (token && !verifyPortalToken(cleanId, token)) {
+    return res.status(403).json({ error: 'Token formulir tidak valid' });
+  }
+
+  const { reason } = req.body;
+  const data = loadData();
+  let order = data.orders.find((o) => o.id.toLowerCase() === cleanId.toLowerCase());
+
+  if (!order) {
+    const now = new Date();
+    order = {
+      id: cleanId,
+      customerName: 'Klien Arise Career',
+      customerPhone: '0812-0000-0000',
+      customerEmail: 'klien@gmail.com',
+      productType: 'CV ATS-Friendly',
+      variation: 'Standar',
+      marketplaceOrderId: '',
+      templateId: 'TMP-ATS-01',
+      marketplace: 'Direct Link',
+      orderDate: now.toISOString(),
+      deadlineDate: new Date(now.getTime() + 48 * 3600000).toISOString(),
+      status: 'Data Masuk',
+      priority: 'Normal',
+      paymentStatus: 'Lunas',
+      price: 99000,
+      customerData: undefined,
+      revisions: [],
+      files: [],
+      isFormLocked: true,
+      editRequestStatus: 'requested',
+      editRequestReason: reason || 'Klien ingin memperbarui data profil/pengalaman',
+      customerSubmittedAt: now.toISOString()
+    };
+    data.orders.unshift(order);
+  } else {
+    order.editRequestStatus = 'requested';
+    order.editRequestReason = reason || 'Klien ingin memperbarui data profil/pengalaman';
+  }
+
+  const newNotif = {
+    id: `NOTIF-${Date.now()}`,
+    orderId: cleanId,
+    type: 'edit_requested',
+    title: '🔔 Permintaan Ubah Data dari HP/Klien',
+    message: `Klien ${order.customerName} (#${order.id}) meminta izin ubah data: "${order.editRequestReason}".`,
+    timestamp: new Date().toISOString(),
+    isRead: false,
+    customerName: order.customerName,
+    productType: order.productType
+  };
+  data.notifications.unshift(newNotif);
+
+  saveData(data);
+  res.json({ success: true, order, notification: newNotif });
+});
+
 // GET all orders
 app.get('/api/orders', (req, res) => {
   const data = loadData();
@@ -90,9 +295,9 @@ app.post('/api/orders/batch-sync', (req, res) => {
 
 // GET single order
 app.get('/api/orders/:id', (req, res) => {
-  const { id } = req.params;
+  const cleanId = (req.params.id || '').trim();
   const data = loadData();
-  const order = data.orders.find((o) => o.id === id);
+  const order = data.orders.find((o) => o.id.toLowerCase() === cleanId.toLowerCase());
   if (order) {
     return res.json(order);
   }
@@ -178,22 +383,47 @@ app.put('/api/orders/:id/customer-data', (req, res) => {
 
 // POST Client requests edit / unlock
 app.post('/api/orders/:id/request-edit', (req, res) => {
-  const { id } = req.params;
+  const cleanId = (req.params.id || '').trim();
   const { reason } = req.body;
   const data = loadData();
-  let order = data.orders.find((o) => o.id === id);
+  let order = data.orders.find((o) => o.id.toLowerCase() === cleanId.toLowerCase());
 
   if (!order) {
-    return res.status(404).json({ error: 'Order not found' });
+    const now = new Date();
+    order = {
+      id: cleanId,
+      customerName: 'Klien Arise Career',
+      customerPhone: '0812-0000-0000',
+      customerEmail: 'klien@gmail.com',
+      productType: 'CV ATS-Friendly',
+      variation: 'Standar',
+      marketplaceOrderId: '',
+      templateId: 'TMP-ATS-01',
+      marketplace: 'Direct Link',
+      orderDate: now.toISOString(),
+      deadlineDate: new Date(now.getTime() + 48 * 3600000).toISOString(),
+      status: 'Data Masuk',
+      priority: 'Normal',
+      paymentStatus: 'Lunas',
+      price: 99000,
+      customerData: undefined,
+      revisions: [],
+      files: [],
+      isFormLocked: true,
+      editRequestStatus: 'requested',
+      editRequestReason: reason || 'Klien ingin memperbarui data profil/pengalaman',
+      customerSubmittedAt: now.toISOString()
+    };
+    data.orders.unshift(order);
+  } else {
+    order.editRequestStatus = 'requested';
+    order.editRequestReason = reason || 'Klien ingin memperbarui data profil/pengalaman';
   }
-
-  order.editRequestStatus = 'requested';
-  order.editRequestReason = reason || 'Klien ingin memperbarui data profil/pengalaman';
 
   // Create real-time notification for seller
   const newNotif = {
     id: `NOTIF-${Date.now()}`,
-    orderId: id,
+    orderId: cleanId,
     type: 'edit_requested',
     title: '🔔 Permintaan Ubah Data dari HP/Klien',
     message: `Klien ${order.customerName} (#${order.id}) meminta izin ubah data: "${order.editRequestReason}".`,
@@ -210,9 +440,9 @@ app.post('/api/orders/:id/request-edit', (req, res) => {
 
 // POST Seller approves edit / unlock form
 app.post('/api/orders/:id/approve-edit', (req, res) => {
-  const { id } = req.params;
+  const cleanId = (req.params.id || '').trim();
   const data = loadData();
-  const order = data.orders.find((o) => o.id === id);
+  const order = data.orders.find((o) => o.id.toLowerCase() === cleanId.toLowerCase());
 
   if (!order) {
     return res.status(404).json({ error: 'Order not found' });
@@ -224,7 +454,7 @@ app.post('/api/orders/:id/approve-edit', (req, res) => {
   // Create notification
   const newNotif = {
     id: `NOTIF-${Date.now()}`,
-    orderId: id,
+    orderId: cleanId,
     type: 'edit_approved',
     title: '🔓 Izin Edit Disetujui',
     message: `Formulir pesanan ${order.id} (${order.customerName}) telah dibuka kuncinya agar klien dapat memperbarui data di HP/PC.`,

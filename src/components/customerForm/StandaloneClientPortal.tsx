@@ -49,6 +49,38 @@ import {
 import { storageService } from '../../services/storage';
 import { formatDate, generateWhatsAppLink } from '../../utils/formatters';
 
+export function normalizeCustomerData(raw: any, orderId: string, customerName?: string, customerPhone?: string): CustomerData {
+  return {
+    id: raw?.id || `CUST-${orderId}`,
+    fullName: raw?.fullName || (customerName && customerName !== 'Klien Arise Career' ? customerName : ''),
+    professionalTitle: raw?.professionalTitle || '',
+    email: raw?.email || '',
+    phone: raw?.phone || (customerPhone && customerPhone !== '0812-0000-0000' ? customerPhone : ''),
+    city: raw?.city || '',
+    country: raw?.country || 'Indonesia',
+    summary: raw?.summary || '',
+    targetJobTitle: raw?.targetJobTitle || '',
+    targetCompany: raw?.targetCompany || '',
+    jobVacancySource: raw?.jobVacancySource || '',
+    coverLetterNotes: raw?.coverLetterNotes || '',
+    photoUrl: raw?.photoUrl || undefined,
+    educations: Array.isArray(raw?.educations) ? raw.educations : [],
+    experiences: Array.isArray(raw?.experiences) ? raw.experiences : [],
+    skills: Array.isArray(raw?.skills) && raw.skills.length > 0 ? raw.skills : [
+      { id: 'SKL-1', categoryName: 'Hard Skills & Tools', skills: [] },
+      { id: 'SKL-2', categoryName: 'Soft Skills', skills: [] }
+    ],
+    certifications: Array.isArray(raw?.certifications) ? raw.certifications : [],
+    projects: Array.isArray(raw?.projects) ? raw.projects : [],
+    languages: Array.isArray(raw?.languages) && raw.languages.length > 0 ? raw.languages : [
+      { id: 'LNG-1', language: 'Bahasa Indonesia', proficiency: 'Penutur Asli' },
+      { id: 'LNG-2', language: 'Bahasa Inggris', proficiency: 'Profesional' }
+    ],
+    socialLinks: Array.isArray(raw?.socialLinks) ? raw.socialLinks : [],
+    lastUpdated: raw?.lastUpdated || new Date().toISOString()
+  };
+}
+
 interface Props {
   orderId: string;
   onExitStandalone?: () => void;
@@ -81,30 +113,12 @@ export const StandaloneClientPortal: React.FC<Props> = ({
   });
 
   const [formData, setFormData] = useState<CustomerData>(() => {
-    return order.customerData || {
-      id: `CUST-${orderId}`,
-      fullName: order.customerName !== 'Klien Arise Career' ? order.customerName : '',
-      professionalTitle: '',
-      email: '',
-      phone: order.customerPhone !== '0812-0000-0000' ? order.customerPhone : '',
-      city: '',
-      country: 'Indonesia',
-      summary: '',
-      educations: [],
-      experiences: [],
-      skills: [
-        { id: 'SKL-1', categoryName: 'Hard Skills & Tools', skills: [] },
-        { id: 'SKL-2', categoryName: 'Soft Skills', skills: [] }
-      ],
-      certifications: [],
-      projects: [],
-      languages: [
-        { id: 'LNG-1', language: 'Bahasa Indonesia', proficiency: 'Penutur Asli' },
-        { id: 'LNG-2', language: 'Bahasa Inggris', proficiency: 'Profesional' }
-      ],
-      socialLinks: [],
-      lastUpdated: new Date().toISOString()
-    };
+    return normalizeCustomerData(
+      order?.customerData,
+      orderId,
+      order?.customerName,
+      order?.customerPhone
+    );
   });
 
   const [activeStep, setActiveStep] = useState<
@@ -119,8 +133,12 @@ export const StandaloneClientPortal: React.FC<Props> = ({
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [formConfigs, setFormConfigs] = useState<ProductFormFieldConfig[]>(() => storageService.getFormFieldConfigs());
 
-  // Listen to storage changes and real-time approval polling
+  const portalToken = typeof window !== 'undefined' ? (new URLSearchParams(window.location.search).get('token') || '') : '';
+
+  // Listen to storage changes and real-time cross-device approval polling
   useEffect(() => {
+    let isMounted = true;
+
     // Check url action parameter for unlock
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -129,31 +147,101 @@ export const StandaloneClientPortal: React.FC<Props> = ({
       }
     }
 
+    // Direct fetch from server on mount for HP/mobile & incognito isolation support
+    const fetchFromServer = async () => {
+      try {
+        const portalUrl = `/api/portal/orders/${encodeURIComponent(orderId.trim())}?token=${encodeURIComponent(portalToken)}`;
+        let res = await fetch(portalUrl);
+        if (!res.ok) {
+          res = await fetch(`/api/orders/${encodeURIComponent(orderId.trim())}`);
+        }
+        if (res.ok && isMounted) {
+          const serverOrder: Order = await res.json();
+          if (serverOrder) {
+            setOrder(serverOrder);
+            storageService.updateOrder(serverOrder);
+            if (serverOrder.customerData) {
+              setFormData((prev) => {
+                const normalized = normalizeCustomerData(
+                  serverOrder.customerData,
+                  orderId,
+                  serverOrder.customerName,
+                  serverOrder.customerPhone
+                );
+                return {
+                  ...normalized,
+                  ...prev,
+                  lastUpdated: serverOrder.customerData?.lastUpdated || prev.lastUpdated,
+                  educations: normalized.educations.length > 0 ? normalized.educations : (prev.educations || []),
+                  experiences: normalized.experiences.length > 0 ? normalized.experiences : (prev.experiences || []),
+                  skills: normalized.skills.length > 0 ? normalized.skills : (prev.skills || []),
+                  languages: normalized.languages.length > 0 ? normalized.languages : (prev.languages || []),
+                  certifications: normalized.certifications.length > 0 ? normalized.certifications : (prev.certifications || []),
+                  projects: normalized.projects.length > 0 ? normalized.projects : (prev.projects || []),
+                  socialLinks: normalized.socialLinks.length > 0 ? normalized.socialLinks : (prev.socialLinks || [])
+                };
+              });
+            }
+          }
+        }
+      } catch (e) {
+        // Fallback silently to local cache
+      }
+    };
+
+    fetchFromServer();
+
     const unsubscribe = storageService.subscribe(() => {
       const updated = storageService.getOrderById(orderId);
-      if (updated) {
+      if (updated && isMounted) {
         setOrder(updated);
       }
     });
 
-    // Polling interval for cross-device updates
-    const pollInterval = setInterval(() => {
-      const latest = storageService.getOrderById(orderId);
-      if (latest) {
-        setOrder((prev) => {
-          if (prev.isFormLocked && !latest.isFormLocked) {
-            onShowToast('🎉 Izin Perubahan Disetujui! Formulir Anda telah dibuka oleh Seller. Silakan perbarui data.');
+    // Cross-device polling interval: checks server directly so Seller actions on PC immediately reflect on HP
+    const pollInterval = setInterval(async () => {
+      try {
+        const portalUrl = `/api/portal/orders/${encodeURIComponent(orderId.trim())}?token=${encodeURIComponent(portalToken)}`;
+        let res = await fetch(portalUrl);
+        if (!res.ok) {
+          res = await fetch(`/api/orders/${encodeURIComponent(orderId.trim())}`);
+        }
+        if (res.ok && isMounted) {
+          const serverOrder: Order = await res.json();
+          if (serverOrder) {
+            setOrder((prev) => {
+              if (prev.isFormLocked && !serverOrder.isFormLocked) {
+                onShowToast('🎉 Izin Perubahan Disetujui! Formulir Anda telah dibuka oleh Seller. Silakan perbarui data.');
+              }
+              return serverOrder;
+            });
+            storageService.updateOrder(serverOrder);
           }
-          return latest;
-        });
+        } else {
+          const latest = storageService.getOrderById(orderId);
+          if (latest && isMounted) {
+            setOrder((prev) => {
+              if (prev.isFormLocked && !latest.isFormLocked) {
+                onShowToast('🎉 Izin Perubahan Disetujui! Formulir Anda telah dibuka oleh Seller. Silakan perbarui data.');
+              }
+              return latest;
+            });
+          }
+        }
+      } catch {
+        const latest = storageService.getOrderById(orderId);
+        if (latest && isMounted) {
+          setOrder(latest);
+        }
       }
-    }, 2000);
+    }, 2500);
 
     return () => {
+      isMounted = false;
       unsubscribe();
       clearInterval(pollInterval);
     };
-  }, [orderId]);
+  }, [orderId, portalToken]);
 
   if (!order) {
     return (
@@ -253,17 +341,29 @@ export const StandaloneClientPortal: React.FC<Props> = ({
     return errors.length === 0;
   };
 
-  const handleDraftSave = () => {
+  const handleDraftSave = async () => {
     const updated: CustomerData = {
       ...formData,
       lastUpdated: new Date().toISOString()
     };
     storageService.updateOrderCustomerData(order.id, updated);
     setFormData(updated);
+
+    try {
+      await fetch(`/api/orders/${encodeURIComponent(order.id.trim())}/customer-data`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerData: updated,
+          isFormLocked: order.isFormLocked ?? false
+        })
+      });
+    } catch {}
+
     onShowToast(`Draf formulir Anda berhasil disimpan.`);
   };
 
-  const handleSubmitFinal = () => {
+  const handleSubmitFinal = async () => {
     const isValid = validateForm();
     if (!isValid) {
       onShowToast('⚠️ Mohon lengkapi bagian wajib sebelum mengirimkan data.');
@@ -276,9 +376,47 @@ export const StandaloneClientPortal: React.FC<Props> = ({
       lastUpdated: nowIso
     };
 
+    // 1. Update storage and local state
     storageService.updateOrderCustomerData(order.id, updated);
     storageService.updateOrderStatus(order.id, 'Data Masuk');
     storageService.lockForm(order.id);
+
+    setOrder((prev) => ({
+      ...prev,
+      customerData: updated,
+      status: 'Data Masuk',
+      isFormLocked: true,
+      editRequestStatus: 'none',
+      customerSubmittedAt: nowIso
+    }));
+
+    // 2. Direct server push
+    try {
+      const portalSubmitUrl = `/api/portal/orders/${encodeURIComponent(order.id.trim())}/customer-data`;
+      let res = await fetch(portalSubmitUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerData: updated,
+          status: 'Data Masuk',
+          isFormLocked: true,
+          token: portalToken
+        })
+      });
+      if (!res.ok) {
+        await fetch(`/api/orders/${encodeURIComponent(order.id.trim())}/customer-data`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customerData: updated,
+            status: 'Data Masuk',
+            isFormLocked: true
+          })
+        });
+      }
+    } catch (err) {
+      console.warn('Server push failed:', err);
+    }
 
     setIsSubmitModalOpen(false);
     setIsSuccessSubmittedModalOpen(true);
@@ -298,13 +436,43 @@ export const StandaloneClientPortal: React.FC<Props> = ({
     window.open(waLink, '_blank');
   };
 
-  const handleRequestEdit = () => {
+  const handleRequestEdit = async () => {
     if (!editReasonText.trim()) {
       onShowToast('⚠️ Harap tuliskan alasan perubahan data.');
       return;
     }
 
-    storageService.requestFormEdit(order.id, editReasonText.trim());
+    const reason = editReasonText.trim();
+
+    // 1. Immediate visual feedback on client device
+    setOrder((prev) => ({
+      ...prev,
+      editRequestStatus: 'requested',
+      editRequestReason: reason
+    }));
+
+    // 2. Storage service
+    storageService.requestFormEdit(order.id, reason);
+
+    // 3. Direct server call so seller gets notification and unlock action immediately
+    try {
+      const portalRequestUrl = `/api/portal/orders/${encodeURIComponent(order.id.trim())}/request-edit`;
+      let res = await fetch(portalRequestUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason, token: portalToken })
+      });
+      if (!res.ok) {
+        await fetch(`/api/orders/${encodeURIComponent(order.id.trim())}/request-edit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reason })
+        });
+      }
+    } catch (err) {
+      console.warn('Request edit push failed:', err);
+    }
+
     setIsRequestEditModalOpen(false);
     setEditReasonText('');
     onShowToast('✓ Permintaan perubahan data telah dikirimkan ke seller untuk disetujui.');
@@ -798,7 +966,7 @@ export const StandaloneClientPortal: React.FC<Props> = ({
                   </button>
                 </div>
 
-                {formData.experiences.length === 0 ? (
+                {(formData.experiences || []).length === 0 ? (
                   <div className="py-8 text-center border border-dashed border-slate-300 rounded-xl text-slate-400 space-y-2">
                     <Briefcase size={24} className="mx-auto text-slate-300" />
                     <p>Belum ada riwayat pengalaman kerja yang ditambahkan.</p>
@@ -813,7 +981,7 @@ export const StandaloneClientPortal: React.FC<Props> = ({
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {formData.experiences.map((exp, idx) => (
+                    {(formData.experiences || []).map((exp, idx) => (
                       <div key={exp.id} className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
                         <div className="flex justify-between items-center border-b pb-2">
                           <span className="font-bold text-slate-800 flex items-center gap-1.5">
@@ -923,7 +1091,7 @@ export const StandaloneClientPortal: React.FC<Props> = ({
                   </button>
                 </div>
 
-                {formData.educations.length === 0 ? (
+                {(formData.educations || []).length === 0 ? (
                   <div className="py-8 text-center border border-dashed border-slate-300 rounded-xl text-slate-400 space-y-2">
                     <GraduationCap size={24} className="mx-auto text-slate-300" />
                     <p>Belum ada riwayat pendidikan yang ditambahkan.</p>
@@ -938,7 +1106,7 @@ export const StandaloneClientPortal: React.FC<Props> = ({
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {formData.educations.map((edu, idx) => (
+                    {(formData.educations || []).map((edu, idx) => (
                       <div key={edu.id} className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
                         <div className="flex justify-between items-center border-b pb-2">
                           <span className="font-bold text-slate-800 flex items-center gap-1.5">
@@ -962,7 +1130,7 @@ export const StandaloneClientPortal: React.FC<Props> = ({
                               type="text"
                               value={edu.institution}
                               onChange={(e) => {
-                                const updated = formData.educations.map((item) =>
+                                const updated = (formData.educations || []).map((item) =>
                                   item.id === edu.id ? { ...item, institution: e.target.value } : item
                                 );
                                 setFormData({ ...formData, educations: updated });
@@ -977,7 +1145,7 @@ export const StandaloneClientPortal: React.FC<Props> = ({
                               type="text"
                               value={edu.major}
                               onChange={(e) => {
-                                const updated = formData.educations.map((item) =>
+                                const updated = (formData.educations || []).map((item) =>
                                   item.id === edu.id ? { ...item, major: e.target.value } : item
                                 );
                                 setFormData({ ...formData, educations: updated });
@@ -993,7 +1161,7 @@ export const StandaloneClientPortal: React.FC<Props> = ({
                                 type="text"
                                 value={edu.startYear}
                                 onChange={(e) => {
-                                  const updated = formData.educations.map((item) =>
+                                  const updated = (formData.educations || []).map((item) =>
                                     item.id === edu.id ? { ...item, startYear: e.target.value } : item
                                   );
                                   setFormData({ ...formData, educations: updated });
@@ -1005,7 +1173,7 @@ export const StandaloneClientPortal: React.FC<Props> = ({
                                 type="text"
                                 value={edu.endYear}
                                 onChange={(e) => {
-                                  const updated = formData.educations.map((item) =>
+                                  const updated = (formData.educations || []).map((item) =>
                                     item.id === edu.id ? { ...item, endYear: e.target.value } : item
                                   );
                                   setFormData({ ...formData, educations: updated });
@@ -1021,7 +1189,7 @@ export const StandaloneClientPortal: React.FC<Props> = ({
                               type="text"
                               value={edu.gpa || ''}
                               onChange={(e) => {
-                                const updated = formData.educations.map((item) =>
+                                const updated = (formData.educations || []).map((item) =>
                                   item.id === edu.id ? { ...item, gpa: e.target.value } : item
                                 );
                                 setFormData({ ...formData, educations: updated });
@@ -1047,15 +1215,15 @@ export const StandaloneClientPortal: React.FC<Props> = ({
 
                 <div className="space-y-3">
                   <label className="font-semibold text-slate-800 block text-xs">Kategori Keahlian (Skills)</label>
-                  {formData.skills.map((cat) => (
+                  {(formData.skills || []).map((cat) => (
                     <div key={cat.id} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
                       <span className="font-bold text-slate-800 text-xs block">{cat.categoryName}</span>
                       <input
                         type="text"
-                        value={cat.skills.join(', ')}
+                        value={(cat.skills || []).join(', ')}
                         onChange={(e) => {
                           const skillsArray = e.target.value.split(',').map((s) => s.trim()).filter(Boolean);
-                          const updated = formData.skills.map((c) =>
+                          const updated = (formData.skills || []).map((c) =>
                             c.id === cat.id ? { ...c, skills: skillsArray } : c
                           );
                           setFormData({ ...formData, skills: updated });

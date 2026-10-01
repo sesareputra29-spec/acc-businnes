@@ -13,31 +13,60 @@ import {
 import { storageService } from '../../services/storage';
 
 interface Props {
+  activeOrder?: Order | null;
   allOrders: Order[];
   onShowToast: (msg: string) => void;
 }
 
 export const OtherDocsView: React.FC<Props> = ({
+  activeOrder,
   allOrders,
   onShowToast
 }) => {
-  const [selectedOrderId, setSelectedOrderId] = useState(allOrders[0]?.id || '');
-  const currentOrder = allOrders.find((o) => o.id === selectedOrderId) || allOrders[0];
+  const [selectedOrderId, setSelectedOrderId] = useState(activeOrder?.id || allOrders[0]?.id || '');
+  const currentOrder = allOrders.find((o) => o.id === selectedOrderId) || activeOrder || allOrders[0];
   const [customerData, setCustomerData] = useState<CustomerData>(currentOrder?.customerData);
   const [activeDocType, setActiveDocType] = useState<'linkedin' | 'bio' | 'references'>('linkedin');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   React.useEffect(() => {
+    if (activeOrder) {
+      setSelectedOrderId(activeOrder.id);
+    }
+  }, [activeOrder]);
+
+  React.useEffect(() => {
     if (currentOrder) {
       setCustomerData(currentOrder.customerData);
     }
-  }, [selectedOrderId]);
+  }, [selectedOrderId, allOrders]);
 
   const handleCopy = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
     setCopiedKey(key);
     onShowToast('Teks berhasil disalin ke clipboard!');
     setTimeout(() => setCopiedKey(null), 2000);
+  };
+
+  const handleSaveDocToOrder = () => {
+    if (currentOrder) {
+      const typeLabel = activeDocType === 'linkedin' ? 'LinkedIn Optimization' :
+        activeDocType === 'bio' ? 'Executive Bio' : 'Professional References';
+      
+      const nextVer = (currentOrder.files?.filter((f) => f.fileName.includes(activeDocType)).length || 0) + 1;
+      const fileName = `${currentOrder.id}_${(customerData?.fullName || currentOrder.customerName).replace(/\s+/g, '_')}_${typeLabel.replace(/\s+/g, '_')}_V${nextVer}.pdf`;
+
+      storageService.addFileToOrder(currentOrder.id, {
+        fileName,
+        stage: 'Final',
+        version: nextVer,
+        uploadedAt: new Date().toISOString(),
+        fileSize: '240 KB',
+        fileType: 'pdf'
+      });
+
+      onShowToast(`✓ Berkas "${fileName}" berhasil disimpan ke Pesanan ${currentOrder.id}.`);
+    }
   };
 
   const headline = `${customerData?.professionalTitle || 'Software Engineer'} | Ex-${customerData?.experiences?.[0]?.company || 'Tech Corp'} | ${customerData?.skills?.[0]?.skills.slice(0, 3).join(' • ') || 'Agile • Cloud'}`;
@@ -70,6 +99,15 @@ export const OtherDocsView: React.FC<Props> = ({
               </option>
             ))}
           </select>
+
+          <button
+            onClick={handleSaveDocToOrder}
+            className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-xs shadow-xs flex items-center gap-1.5 transition-colors"
+            title="Simpan dokumen ini sebagai berkas pada pesanan klien"
+          >
+            <Save size={13} />
+            <span>Simpan ke Pesanan</span>
+          </button>
         </div>
       </div>
 

@@ -280,6 +280,7 @@ export interface AppSettings {
   businessPhone: string;
   orderIdPrefix: string;
   defaultDeadlineHours: number;
+  publicAppUrl?: string;
   waTemplateWelcome: string;
   waTemplatePreview: string;
   waTemplateFinal: string;

@@ -323,7 +323,7 @@ export const OrderDetailDrawer: React.FC<Props> = ({
                     className="p-2.5 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-800 rounded-lg font-medium text-xs flex items-center justify-center gap-1.5 transition-colors"
                   >
                     <Send size={13} />
-                    <span>Kirim Link Form</span>
+                    <span>Kirim Link Form (WA)</span>
                   </button>
                   <button
                     onClick={sendWhatsAppPreview}

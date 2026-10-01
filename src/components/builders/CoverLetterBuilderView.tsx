@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Order, CustomerData } from '../../types';
+import React, { useState, useEffect } from 'react';
+import { Order, CustomerData, DocumentTemplate } from '../../types';
 import { DocumentRenderer } from './DocumentRenderer';
 import { 
   Mail, 
@@ -14,21 +14,34 @@ import {
   Target,
   FileText,
   User,
-  ExternalLink
+  ExternalLink,
+  FileCheck,
+  CheckCircle2
 } from 'lucide-react';
 import { storageService } from '../../services/storage';
+import { generateStandardFileName } from '../../utils/formatters';
 
 interface Props {
+  activeOrder?: Order | null;
   allOrders: Order[];
+  templates?: DocumentTemplate[];
   onShowToast: (msg: string) => void;
 }
 
 export const CoverLetterBuilderView: React.FC<Props> = ({
+  activeOrder,
   allOrders,
+  templates = [],
   onShowToast
 }) => {
-  const [selectedOrderId, setSelectedOrderId] = useState(allOrders[0]?.id || '');
-  const currentOrder = allOrders.find((o) => o.id === selectedOrderId) || allOrders[0];
+  const [selectedOrderId, setSelectedOrderId] = useState(activeOrder?.id || allOrders[0]?.id || '');
+  const currentOrder = allOrders.find((o) => o.id === selectedOrderId) || activeOrder || allOrders[0];
+
+  useEffect(() => {
+    if (activeOrder) {
+      setSelectedOrderId(activeOrder.id);
+    }
+  }, [activeOrder]);
   const [customerData, setCustomerData] = useState<CustomerData>(
     currentOrder?.customerData || {
       id: 'CUST-CL',
@@ -101,6 +114,64 @@ export const CoverLetterBuilderView: React.FC<Props> = ({
     }
   };
 
+  const handleGeneratePreview = () => {
+    if (currentOrder) {
+      storageService.updateOrderCustomerData(currentOrder.id, customerData);
+      const nextVer = (currentOrder.files?.filter((f) => f.stage === 'Preview').length || 0) + 1;
+      const fileName = generateStandardFileName(
+        currentOrder.id,
+        customerData.fullName || currentOrder.customerName,
+        'Cover Letter / Surat Lamaran',
+        'Preview',
+        nextVer,
+        'pdf'
+      );
+
+      storageService.addFileToOrder(currentOrder.id, {
+        fileName,
+        stage: 'Preview',
+        version: nextVer,
+        uploadedAt: new Date().toISOString(),
+        fileSize: '310 KB',
+        fileType: 'pdf'
+      });
+
+      storageService.updateOrderStatus(currentOrder.id, 'Preview');
+      onShowToast(`✓ Berkas Preview (${fileName}) dibuat & status pesanan beralih ke "Preview"!`);
+    }
+  };
+
+  const handlePrintPdf = () => {
+    if (currentOrder) {
+      storageService.updateOrderCustomerData(currentOrder.id, customerData);
+      const nextVer = (currentOrder.files?.filter((f) => f.stage === 'Final').length || 0) + 1;
+      const fileName = generateStandardFileName(
+        currentOrder.id,
+        customerData.fullName || currentOrder.customerName,
+        'Cover Letter / Surat Lamaran',
+        'Final',
+        nextVer,
+        'pdf'
+      );
+
+      storageService.addFileToOrder(currentOrder.id, {
+        fileName,
+        stage: 'Final',
+        version: nextVer,
+        uploadedAt: new Date().toISOString(),
+        fileSize: '340 KB',
+        fileType: 'pdf'
+      });
+
+      storageService.updateOrderStatus(currentOrder.id, 'Finalisasi');
+      onShowToast(`✓ Berkas Final (${fileName}) tersimpan di pesanan.`);
+    }
+
+    setTimeout(() => {
+      window.print();
+    }, 200);
+  };
+
   return (
     <div className="space-y-4">
       {/* Top Header */}
@@ -136,17 +207,28 @@ export const CoverLetterBuilderView: React.FC<Props> = ({
           <button
             onClick={handleSave}
             className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg flex items-center gap-1.5"
+            title="Simpan draf data surat lamaran ke pesanan"
           >
             <Save size={13} />
             <span>Simpan</span>
           </button>
 
           <button
-            onClick={() => window.print()}
+            onClick={handleGeneratePreview}
+            className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-semibold text-xs rounded-lg flex items-center gap-1.5"
+            title="Buat berkas draf preview untuk dikirim ke klien"
+          >
+            <FileCheck size={13} className="text-amber-600" />
+            <span>Buat Preview</span>
+          </button>
+
+          <button
+            onClick={handlePrintPdf}
             className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg shadow-sm flex items-center gap-1.5"
+            title="Finalisasi & Cetak berkas PDF final"
           >
             <Printer size={13} />
-            <span>Cetak PDF</span>
+            <span>Cetak PDF Final</span>
           </button>
         </div>
       </div>

@@ -229,26 +229,57 @@ export const CvBuilderView: React.FC<Props> = ({
     }
   };
 
+  // Generate Preview File & advance status to Preview
+  const handleGeneratePreview = () => {
+    if (currentOrder) {
+      storageService.updateOrderCustomerData(currentOrder.id, customerData);
+      const nextVer = (currentOrder.files?.filter((f) => f.stage === 'Preview').length || 0) + 1;
+      const fileName = generateStandardFileName(
+        currentOrder.id,
+        customerData.fullName || currentOrder.customerName,
+        currentOrder.productType,
+        'Preview',
+        nextVer,
+        'pdf'
+      );
+
+      storageService.addFileToOrder(currentOrder.id, {
+        fileName,
+        stage: 'Preview',
+        version: nextVer,
+        uploadedAt: new Date().toISOString(),
+        fileSize: '330 KB',
+        fileType: 'pdf'
+      });
+
+      storageService.updateOrderStatus(currentOrder.id, 'Preview');
+      onShowToast(`✓ Draf Preview (${fileName}) berhasil dibuat & status pesanan beralih ke "Preview"!`);
+    }
+  };
+
   // Export PDF via Browser Print
   const handlePrintPdf = () => {
     if (currentOrder) {
+      const nextVer = (currentOrder.files?.filter((f) => f.stage === 'Final').length || 0) + 1;
       const fileName = generateStandardFileName(
         currentOrder.id,
         customerData.fullName || currentOrder.customerName,
         currentOrder.productType,
         'Final',
-        (currentOrder.files?.length || 0) + 1,
+        nextVer,
         'pdf'
       );
 
       storageService.addFileToOrder(currentOrder.id, {
         fileName,
         stage: 'Final',
-        version: (currentOrder.files?.length || 0) + 1,
+        version: nextVer,
         uploadedAt: new Date().toISOString(),
         fileSize: '352 KB',
         fileType: 'pdf'
       });
+
+      storageService.updateOrderStatus(currentOrder.id, 'Finalisasi');
     }
 
     onShowToast('Membuka dialog cetak PDF browser...');
@@ -310,17 +341,28 @@ export const CvBuilderView: React.FC<Props> = ({
           <button
             onClick={handleSaveToOrder}
             className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-lg transition-colors flex items-center gap-1.5"
+            title="Simpan perubahan draf ke pesanan"
           >
             <Save size={13} />
             <span>Simpan</span>
           </button>
 
           <button
+            onClick={handleGeneratePreview}
+            className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-semibold text-xs rounded-lg transition-colors flex items-center gap-1.5"
+            title="Buat berkas draf preview & ubah status pesanan ke Preview"
+          >
+            <FileCheck size={13} className="text-amber-600" />
+            <span>Buat Preview</span>
+          </button>
+
+          <button
             onClick={handlePrintPdf}
             className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg shadow-sm transition-colors flex items-center gap-1.5"
+            title="Finalisasi berkas dan cetak PDF"
           >
             <Printer size={13} />
-            <span>Cetak / Export PDF</span>
+            <span>Cetak PDF Final</span>
           </button>
         </div>
       </div>

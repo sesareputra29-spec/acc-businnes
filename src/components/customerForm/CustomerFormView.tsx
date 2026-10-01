@@ -716,7 +716,7 @@ export const CustomerFormView: React.FC<Props> = ({
                     title="Salin tautan formulir mandiri khusus klien ini"
                   >
                     {copiedLink ? <Check size={13} className="text-emerald-600" /> : <LinkIcon size={13} />}
-                    <span>{copiedLink ? 'Tautan Klien Tersalin!' : 'Salin Link Klien'}</span>
+                    <span>{copiedLink ? 'Tersalin!' : 'Salin Link'}</span>
                   </button>
 
                   {/* WhatsApp Quick Share Button */}
@@ -727,7 +727,7 @@ export const CustomerFormView: React.FC<Props> = ({
                     title="Kirim link pengisian langsung ke WhatsApp klien"
                   >
                     <MessageSquare size={13} className="text-emerald-600" />
-                    <span>Kirim Link via WhatsApp</span>
+                    <span>Kirim WA</span>
                   </button>
                 </div>
 

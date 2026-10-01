@@ -4,8 +4,12 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
+  const publicAppUrl = process.env.APP_URL || process.env.VITE_APP_URL || '';
   return {
     plugins: [react(), tailwindcss()],
+    define: {
+      'import.meta.env.VITE_APP_URL': JSON.stringify(publicAppUrl),
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

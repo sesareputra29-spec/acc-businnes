@@ -24,6 +24,7 @@ interface Props {
   onClose: () => void;
   onEdit: (customer: CustomerProfile) => void;
   onSelectOrder: (order: Order) => void;
+  onCreateOrder?: (customer: CustomerProfile) => void;
   onShowToast: (msg: string) => void;
 }
 
@@ -33,6 +34,7 @@ export const CustomerDetailModal: React.FC<Props> = ({
   onClose,
   onEdit,
   onSelectOrder,
+  onCreateOrder,
   onShowToast
 }) => {
   if (!customer) return null;
@@ -77,6 +79,19 @@ export const CustomerDetailModal: React.FC<Props> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            {onCreateOrder && (
+              <button
+                onClick={() => {
+                  onClose();
+                  onCreateOrder(customer);
+                }}
+                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors"
+                title="Buat pesanan baru untuk pelanggan ini"
+              >
+                <ShoppingBag size={13} />
+                <span>Buat Pesanan Baru</span>
+              </button>
+            )}
             <button
               onClick={() => onEdit(customer)}
               className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors"

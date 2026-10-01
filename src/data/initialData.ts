@@ -638,6 +638,7 @@ export const INITIAL_SETTINGS: AppSettings = {
   businessPhone: '0812-8800-9900',
   orderIdPrefix: 'ORD',
   defaultDeadlineHours: 48,
+  publicAppUrl: '',
   waTemplateWelcome: 'Halo kak {nama}, terima kasih telah memesan {produk} di Arise Career Craft. Mohon lengkapi formulir data karier melalui tautan berikut agar tim desainer kami dapat langsung memproses: {link_form}',
   waTemplatePreview: 'Halo kak {nama}, draf preview {produk} kakak sudah selesai dikerjakan! Silakan cek file berikut: {link_preview}. Jika ada revisi, silakan beri tahu kami ya.',
   waTemplateFinal: 'Halo kak {nama}, berkas final {produk} berkualitas cetak & ATS sudah selesai dan kami lampirkan. Terima kasih telah mempercayakan Arise Career Craft. Semoga sukses seleksi kerjanya!',

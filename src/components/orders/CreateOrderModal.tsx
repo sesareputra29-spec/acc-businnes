@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import { X, CheckCircle, Store, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, CheckCircle, Store, AlertCircle, User, Users } from 'lucide-react';
 import { 
   Order, 
   MarketplaceSource, 
   ProductType, 
   PaymentStatus, 
   DocumentTemplate,
-  CustomerData
+  CustomerData,
+  CustomerProfile
 } from '../../types';
 import { storageService } from '../../services/storage';
 
@@ -14,6 +15,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   templates: DocumentTemplate[];
+  preselectedCustomer?: CustomerProfile | null;
   onOrderCreated: (order: Order) => void;
   onShowToast: (msg: string) => void;
 }
@@ -22,16 +24,20 @@ export const CreateOrderModal: React.FC<Props> = ({
   isOpen,
   onClose,
   templates,
+  preselectedCustomer,
   onOrderCreated,
   onShowToast
 }) => {
   if (!isOpen) return null;
 
+  const existingCustomers = storageService.getCustomers();
+
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string>(preselectedCustomer?.id || '');
   const [marketplace, setMarketplace] = useState<MarketplaceSource>('Shopee');
   const [marketplaceOrderId, setMarketplaceOrderId] = useState('');
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [customerEmail, setCustomerEmail] = useState('');
+  const [customerName, setCustomerName] = useState(preselectedCustomer?.fullName || '');
+  const [customerPhone, setCustomerPhone] = useState(preselectedCustomer?.phone || '');
+  const [customerEmail, setCustomerEmail] = useState(preselectedCustomer?.email || '');
   const [productType, setProductType] = useState<ProductType>('CV ATS-Friendly');
   const [variation, setVariation] = useState('Bahasa Indonesia (Standar)');
   const [price, setPrice] = useState(49000);
@@ -39,6 +45,21 @@ export const CreateOrderModal: React.FC<Props> = ({
   const [priority, setPriority] = useState<'Normal' | 'Tinggi' | 'Urgent'>('Normal');
   const [templateId, setTemplateId] = useState(templates[0]?.id || 'TMP-ATS-01');
   const [internalNotes, setInternalNotes] = useState('');
+
+  // Handle existing customer selection
+  const handleCustomerSelect = (customerId: string) => {
+    setSelectedCustomerId(customerId);
+    if (!customerId) {
+      return;
+    }
+    const found = existingCustomers.find((c) => c.id === customerId);
+    if (found) {
+      setCustomerName(found.fullName);
+      setCustomerPhone(found.phone);
+      setCustomerEmail(found.email);
+      onShowToast(`Data profil pelanggan "${found.fullName}" diterapkan.`);
+    }
+  };
 
   const handleProductChange = (newProduct: ProductType) => {
     setProductType(newProduct);
@@ -71,6 +92,19 @@ export const CreateOrderModal: React.FC<Props> = ({
       default:
         setPrice(49000);
     }
+
+    // Recommend matching template
+    const matchingTemplate = templates.find((t) => {
+      if (newProduct === 'Portfolio Profesional') return t.category === 'Portfolio';
+      if (newProduct === 'Cover Letter / Surat Lamaran') return t.category === 'CoverLetter';
+      if (newProduct === 'CV ATS-Friendly') return t.isAtsCompliant;
+      if (newProduct === 'CV Kreatif / Desain') return t.category === 'Creative' || t.category === 'Modern';
+      return true;
+    });
+
+    if (matchingTemplate) {
+      setTemplateId(matchingTemplate.id);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -83,7 +117,19 @@ export const CreateOrderModal: React.FC<Props> = ({
     const settings = storageService.getSettings();
     const nextId = storageService.generateNextOrderId();
 
-    const emptyCustomerData: CustomerData = {
+    // If an existing customer was chosen, inherit customer data
+    const existingCust = selectedCustomerId 
+      ? existingCustomers.find((c) => c.id === selectedCustomerId) 
+      : existingCustomers.find((c) => c.phone === customerPhone || c.email === customerEmail);
+
+    const initialCustomerData: CustomerData = existingCust?.customerData ? {
+      ...existingCust.customerData,
+      id: `CUST-${nextId}`,
+      fullName: customerName,
+      email: customerEmail,
+      phone: customerPhone,
+      lastUpdated: new Date().toISOString()
+    } : {
       id: `CUST-${Date.now().toString().slice(-5)}`,
       fullName: customerName,
       professionalTitle: '',
@@ -118,7 +164,7 @@ export const CreateOrderModal: React.FC<Props> = ({
       status: 'Menunggu Data',
       priority,
       templateId,
-      customerData: emptyCustomerData,
+      customerData: initialCustomerData,
       customerFormSlug: `form-${nextId.toLowerCase()}`,
       revisions: [],
       files: [],
@@ -127,7 +173,7 @@ export const CreateOrderModal: React.FC<Props> = ({
 
     storageService.addOrder(newOrder);
     onOrderCreated(newOrder);
-    onShowToast(`Pesanan ${newOrder.id} berhasil dibuat!`);
+    onShowToast(`Pesanan ${newOrder.id} berhasil dibuat dan terhubung ke antrian!`);
     onClose();
   };
 
@@ -176,8 +222,36 @@ export const CreateOrderModal: React.FC<Props> = ({
           </div>
 
           {/* Customer Info */}
-          <div className="border-t border-slate-100 pt-3">
-            <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[10px] mb-3">Informasi Pelanggan</h4>
+          <div className="border-t border-slate-100 pt-3 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[10px]">Informasi Pelanggan</h4>
+              <span className="text-[10px] text-indigo-600 font-semibold flex items-center gap-1">
+                <Users size={12} />
+                <span>Master Data Pelanggan</span>
+              </span>
+            </div>
+
+            {/* Quick Customer Picker Dropdown */}
+            {existingCustomers.length > 0 && (
+              <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  Pilih dari Pelanggan Terdaftar (Opsional untuk Repeat Order):
+                </label>
+                <select
+                  value={selectedCustomerId}
+                  onChange={(e) => handleCustomerSelect(e.target.value)}
+                  className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-md text-xs font-medium focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="">-- Input Pelanggan Baru Secara Manual --</option>
+                  {existingCustomers.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.fullName} ({c.phone || c.email || 'Tanpa Kontak'}) - {c.city || 'Indonesia'}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Nama Lengkap *</label>

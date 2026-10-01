@@ -18,6 +18,7 @@ import {
 import { AppSettings, UserRole } from '../../types';
 import { storageService } from '../../services/storage';
 import { ROLE_PERMISSIONS } from '../../services/permissionService';
+import { getPublicBaseUrl } from '../../utils/formatters';
 
 interface Props {
   onShowToast: (msg: string) => void;
@@ -156,6 +157,36 @@ export const SettingsView: React.FC<Props> = ({ onShowToast }) => {
                   />
                   <p className="text-[10px] text-slate-400 mt-1">Standar pengerjaan express (misal: 24 jam / 48 jam)</p>
                 </div>
+              </div>
+
+              {/* Public App URL for HP Portal links */}
+              <div className="pt-3 border-t border-slate-100">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-semibold text-slate-700 block">
+                    URL Domain Publik Portal Klien (Wajib untuk Akses HP & WhatsApp)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const detected = getPublicBaseUrl();
+                      setSettings({ ...settings, publicAppUrl: detected });
+                      onShowToast(`URL publik berhasil dideteksi: ${detected}`);
+                    }}
+                    className="text-[11px] text-indigo-600 hover:text-indigo-800 font-semibold"
+                  >
+                    Deteksi Otomatis URL Publik
+                  </button>
+                </div>
+                <input
+                  type="url"
+                  value={settings.publicAppUrl ? settings.publicAppUrl.replace('ais-pre-', 'ais-dev-') : ''}
+                  onChange={(e) => setSettings({ ...settings, publicAppUrl: e.target.value.replace('ais-pre-', 'ais-dev-') })}
+                  placeholder="https://ais-dev-...run.app atau https://domain-anda.com"
+                  className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-indigo-500 font-mono text-xs"
+                />
+                <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                  Tautan formulir yang dikirim ke WhatsApp klien akan otomatis menggunakan domain ini (bukan localhost/127.0.0.1) agar dapat langsung dibuka dari HP/Smartphone tanpa error.
+                </p>
               </div>
             </div>
           </div>

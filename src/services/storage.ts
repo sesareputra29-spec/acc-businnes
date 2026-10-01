@@ -114,6 +114,35 @@ const INITIAL_CUSTOMERS: CustomerProfile[] = [
 type Listener = () => void;
 const listeners = new Set<Listener>();
 
+// Safe localStorage wrapper with in-memory fallback for Incognito / Safari / mobile WebView
+const inMemoryStorage = new Map<string, string>();
+const safeLocalStorage = {
+  getItem(key: string): string | null {
+    try {
+      if (typeof window === 'undefined' || !window.localStorage) return inMemoryStorage.get(key) || null;
+      return window.localStorage.getItem(key) || inMemoryStorage.get(key) || null;
+    } catch {
+      return inMemoryStorage.get(key) || null;
+    }
+  },
+  setItem(key: string, value: string): void {
+    inMemoryStorage.set(key, value);
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(key, value);
+      }
+    } catch {}
+  },
+  removeItem(key: string): void {
+    inMemoryStorage.delete(key);
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.removeItem(key);
+      }
+    } catch {}
+  }
+};
+
 // Cross-tab and cross-window sync channel
 let broadcastChannel: BroadcastChannel | null = null;
 try {
@@ -169,7 +198,7 @@ async function syncFromServerApi() {
         });
 
         if (hasNewOrUpdated) {
-          localStorage.setItem(KEYS.ORDERS, JSON.stringify(localOrders));
+          safeLocalStorage.setItem(KEYS.ORDERS, JSON.stringify(localOrders));
           changed = true;
         }
       }
@@ -190,7 +219,7 @@ async function syncFromServerApi() {
         });
 
         if (addedNotifs) {
-          localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(localNotifs.slice(0, 50)));
+          safeLocalStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(localNotifs.slice(0, 50)));
           changed = true;
         }
       }
@@ -249,20 +278,20 @@ export const storageService = {
 
   // Role
   getCurrentRole(): 'Admin' | 'Operator' | 'Designer' {
-    const saved = localStorage.getItem(KEYS.CURRENT_ROLE);
+    const saved = safeLocalStorage.getItem(KEYS.CURRENT_ROLE);
     return (saved as 'Admin' | 'Operator' | 'Designer') || 'Admin';
   },
 
   setCurrentRole(role: 'Admin' | 'Operator' | 'Designer') {
-    localStorage.setItem(KEYS.CURRENT_ROLE, role);
+    safeLocalStorage.setItem(KEYS.CURRENT_ROLE, role);
     notify();
   },
 
   // Orders
   getOrders(): Order[] {
-    const data = localStorage.getItem(KEYS.ORDERS);
+    const data = safeLocalStorage.getItem(KEYS.ORDERS);
     if (!data) {
-      localStorage.setItem(KEYS.ORDERS, JSON.stringify(INITIAL_ORDERS));
+      safeLocalStorage.setItem(KEYS.ORDERS, JSON.stringify(INITIAL_ORDERS));
       return INITIAL_ORDERS;
     }
     try {
@@ -273,7 +302,7 @@ export const storageService = {
   },
 
   saveOrders(orders: Order[]) {
-    localStorage.setItem(KEYS.ORDERS, JSON.stringify(orders));
+    safeLocalStorage.setItem(KEYS.ORDERS, JSON.stringify(orders));
     notify();
   },
 
@@ -543,7 +572,7 @@ export const storageService = {
 
   // Notifications System
   getNotifications(): AppNotification[] {
-    const data = localStorage.getItem(KEYS.NOTIFICATIONS);
+    const data = safeLocalStorage.getItem(KEYS.NOTIFICATIONS);
     if (!data) {
       const initialNotifs: AppNotification[] = [
         {
@@ -558,7 +587,7 @@ export const storageService = {
           productType: 'CV ATS-Friendly'
         }
       ];
-      localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(initialNotifs));
+      safeLocalStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(initialNotifs));
       return initialNotifs;
     }
     try {
@@ -569,7 +598,7 @@ export const storageService = {
   },
 
   saveNotifications(notifications: AppNotification[]) {
-    localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(notifications));
+    safeLocalStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(notifications));
     notify();
   },
 
@@ -632,9 +661,9 @@ export const storageService = {
 
   // Customers
   getCustomers(): CustomerProfile[] {
-    const data = localStorage.getItem(KEYS.CUSTOMERS);
+    const data = safeLocalStorage.getItem(KEYS.CUSTOMERS);
     if (!data) {
-      localStorage.setItem(KEYS.CUSTOMERS, JSON.stringify(INITIAL_CUSTOMERS));
+      safeLocalStorage.setItem(KEYS.CUSTOMERS, JSON.stringify(INITIAL_CUSTOMERS));
       return INITIAL_CUSTOMERS;
     }
     try {
@@ -645,7 +674,7 @@ export const storageService = {
   },
 
   saveCustomers(customers: CustomerProfile[]) {
-    localStorage.setItem(KEYS.CUSTOMERS, JSON.stringify(customers));
+    safeLocalStorage.setItem(KEYS.CUSTOMERS, JSON.stringify(customers));
     notify();
   },
 
@@ -703,9 +732,9 @@ export const storageService = {
 
   // Dynamic Form Field Configs
   getFormFieldConfigs(): ProductFormFieldConfig[] {
-    const data = localStorage.getItem(KEYS.FORM_CONFIGS);
+    const data = safeLocalStorage.getItem(KEYS.FORM_CONFIGS);
     if (!data) {
-      localStorage.setItem(KEYS.FORM_CONFIGS, JSON.stringify(DEFAULT_FORM_CONFIGS));
+      safeLocalStorage.setItem(KEYS.FORM_CONFIGS, JSON.stringify(DEFAULT_FORM_CONFIGS));
       return DEFAULT_FORM_CONFIGS;
     }
     try {
@@ -716,7 +745,7 @@ export const storageService = {
   },
 
   saveFormFieldConfigs(configs: ProductFormFieldConfig[]) {
-    localStorage.setItem(KEYS.FORM_CONFIGS, JSON.stringify(configs));
+    safeLocalStorage.setItem(KEYS.FORM_CONFIGS, JSON.stringify(configs));
     notify();
   },
 
@@ -733,9 +762,9 @@ export const storageService = {
 
   // Templates
   getTemplates(): DocumentTemplate[] {
-    const data = localStorage.getItem(KEYS.TEMPLATES);
+    const data = safeLocalStorage.getItem(KEYS.TEMPLATES);
     if (!data) {
-      localStorage.setItem(KEYS.TEMPLATES, JSON.stringify(INITIAL_TEMPLATES));
+      safeLocalStorage.setItem(KEYS.TEMPLATES, JSON.stringify(INITIAL_TEMPLATES));
       return INITIAL_TEMPLATES;
     }
     try {
@@ -746,7 +775,7 @@ export const storageService = {
   },
 
   saveTemplates(templates: DocumentTemplate[]) {
-    localStorage.setItem(KEYS.TEMPLATES, JSON.stringify(templates));
+    safeLocalStorage.setItem(KEYS.TEMPLATES, JSON.stringify(templates));
     notify();
   },
 
@@ -805,9 +834,9 @@ export const storageService = {
 
   // Staff
   getStaff(): StaffMember[] {
-    const data = localStorage.getItem(KEYS.STAFF);
+    const data = safeLocalStorage.getItem(KEYS.STAFF);
     if (!data) {
-      localStorage.setItem(KEYS.STAFF, JSON.stringify(INITIAL_STAFF));
+      safeLocalStorage.setItem(KEYS.STAFF, JSON.stringify(INITIAL_STAFF));
       return INITIAL_STAFF;
     }
     try {
@@ -818,7 +847,7 @@ export const storageService = {
   },
 
   saveStaff(staff: StaffMember[]) {
-    localStorage.setItem(KEYS.STAFF, JSON.stringify(staff));
+    safeLocalStorage.setItem(KEYS.STAFF, JSON.stringify(staff));
     notify();
   },
 
@@ -844,9 +873,9 @@ export const storageService = {
 
   // Shopee
   getShopeeProducts(): ShopeeProduct[] {
-    const data = localStorage.getItem(KEYS.SHOPEE_PRODUCTS);
+    const data = safeLocalStorage.getItem(KEYS.SHOPEE_PRODUCTS);
     if (!data) {
-      localStorage.setItem(KEYS.SHOPEE_PRODUCTS, JSON.stringify(INITIAL_SHOPEE_PRODUCTS));
+      safeLocalStorage.setItem(KEYS.SHOPEE_PRODUCTS, JSON.stringify(INITIAL_SHOPEE_PRODUCTS));
       return INITIAL_SHOPEE_PRODUCTS;
     }
     try {
@@ -857,7 +886,7 @@ export const storageService = {
   },
 
   saveShopeeProducts(products: ShopeeProduct[]) {
-    localStorage.setItem(KEYS.SHOPEE_PRODUCTS, JSON.stringify(products));
+    safeLocalStorage.setItem(KEYS.SHOPEE_PRODUCTS, JSON.stringify(products));
     notify();
   },
 
@@ -872,9 +901,9 @@ export const storageService = {
   },
 
   getShopeeLogs(): ShopeeSyncLog[] {
-    const data = localStorage.getItem(KEYS.SHOPEE_LOGS);
+    const data = safeLocalStorage.getItem(KEYS.SHOPEE_LOGS);
     if (!data) {
-      localStorage.setItem(KEYS.SHOPEE_LOGS, JSON.stringify(INITIAL_SHOPEE_LOGS));
+      safeLocalStorage.setItem(KEYS.SHOPEE_LOGS, JSON.stringify(INITIAL_SHOPEE_LOGS));
       return INITIAL_SHOPEE_LOGS;
     }
     try {
@@ -890,15 +919,15 @@ export const storageService = {
       ...log,
       id: `LOG-${Date.now()}`
     });
-    localStorage.setItem(KEYS.SHOPEE_LOGS, JSON.stringify(logs.slice(0, 50)));
+    safeLocalStorage.setItem(KEYS.SHOPEE_LOGS, JSON.stringify(logs.slice(0, 50)));
     notify();
   },
 
   // Settings
   getSettings(): AppSettings {
-    const data = localStorage.getItem(KEYS.SETTINGS);
+    const data = safeLocalStorage.getItem(KEYS.SETTINGS);
     if (!data) {
-      localStorage.setItem(KEYS.SETTINGS, JSON.stringify(INITIAL_SETTINGS));
+      safeLocalStorage.setItem(KEYS.SETTINGS, JSON.stringify(INITIAL_SETTINGS));
       return INITIAL_SETTINGS;
     }
     try {
@@ -909,19 +938,19 @@ export const storageService = {
   },
 
   saveSettings(settings: AppSettings) {
-    localStorage.setItem(KEYS.SETTINGS, JSON.stringify(settings));
+    safeLocalStorage.setItem(KEYS.SETTINGS, JSON.stringify(settings));
     notify();
   },
 
   resetAllData() {
-    localStorage.setItem(KEYS.ORDERS, JSON.stringify(INITIAL_ORDERS));
-    localStorage.setItem(KEYS.CUSTOMERS, JSON.stringify(INITIAL_CUSTOMERS));
-    localStorage.setItem(KEYS.TEMPLATES, JSON.stringify(INITIAL_TEMPLATES));
-    localStorage.setItem(KEYS.STAFF, JSON.stringify(INITIAL_STAFF));
-    localStorage.setItem(KEYS.SHOPEE_PRODUCTS, JSON.stringify(INITIAL_SHOPEE_PRODUCTS));
-    localStorage.setItem(KEYS.SHOPEE_LOGS, JSON.stringify(INITIAL_SHOPEE_LOGS));
-    localStorage.setItem(KEYS.FORM_CONFIGS, JSON.stringify(DEFAULT_FORM_CONFIGS));
-    localStorage.setItem(KEYS.SETTINGS, JSON.stringify(INITIAL_SETTINGS));
+    safeLocalStorage.setItem(KEYS.ORDERS, JSON.stringify(INITIAL_ORDERS));
+    safeLocalStorage.setItem(KEYS.CUSTOMERS, JSON.stringify(INITIAL_CUSTOMERS));
+    safeLocalStorage.setItem(KEYS.TEMPLATES, JSON.stringify(INITIAL_TEMPLATES));
+    safeLocalStorage.setItem(KEYS.STAFF, JSON.stringify(INITIAL_STAFF));
+    safeLocalStorage.setItem(KEYS.SHOPEE_PRODUCTS, JSON.stringify(INITIAL_SHOPEE_PRODUCTS));
+    safeLocalStorage.setItem(KEYS.SHOPEE_LOGS, JSON.stringify(INITIAL_SHOPEE_LOGS));
+    safeLocalStorage.setItem(KEYS.FORM_CONFIGS, JSON.stringify(DEFAULT_FORM_CONFIGS));
+    safeLocalStorage.setItem(KEYS.SETTINGS, JSON.stringify(INITIAL_SETTINGS));
     notify();
   }
 };

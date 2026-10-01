@@ -1,0 +1,1406 @@
+{
+  "orders": [
+    {
+      "id": "ORD-2025-001284",
+      "marketplace": "Shopee",
+      "marketplaceOrderId": "24051887KJ92X1",
+      "customerName": "Bagas Aditya Pratama",
+      "customerPhone": "081298443210",
+      "customerEmail": "bagas.aditya@gmail.com",
+      "productType": "Paket Komplit (CV + Portfolio + CL)",
+      "variation": "Bahasa Indonesia & English (Dual)",
+      "price": 189000,
+      "orderDate": "2025-05-18T09:15:00Z",
+      "deadlineDate": "2025-05-20T17:00:00Z",
+      "paymentStatus": "Lunas",
+      "status": "Data Masuk",
+      "priority": "Tinggi",
+      "templateId": "TMP-ATS-01",
+      "assignedStaffId": "STF-003",
+      "customerData": {
+        "fullName": "Bagas Aditya Pratama, S.Kom.",
+        "email": "bagas.aditya@gmail.com",
+        "phone": "0812-9844-3210",
+        "experiences": [
+          {
+            "id": "EXP-1",
+            "company": "PT Fintek Karya Nusantara (LinkAja)",
+            "position": "Senior Frontend Engineer",
+            "location": "Jakarta",
+            "startDate": "2022-03",
+            "isCurrent": true,
+            "bulletPoints": [
+              "Memimpin refaktorisasi arsitektur core web portal merchant menggunakan Next.js dan Tailwind CSS, meningkatkan Web Vitals score sebesar 42%.",
+              "Mengintegrasikan dashboard analitik transaksi real-time berbasis WebSocket dengan beban 500k+ event harian.",
+              "Menerapkan design system internal (40+ reusable UI components) dan mentoring 4 junior frontend developers."
+            ]
+          },
+          {
+            "id": "EXP-2",
+            "company": "PT Global Tiket Network (Tiket.com)",
+            "position": "Frontend Developer",
+            "location": "Jakarta",
+            "startDate": "2020-08",
+            "endDate": "2022-02",
+            "isCurrent": false,
+            "bulletPoints": [
+              "Membangun alur checkout hotel & flight internasional dengan React, Redux Toolkit, dan integrasi Payment Gateway.",
+              "Mengurangi error crash rate hingga 0.05% dengan menerapkan testing terotomasi Jest dan React Testing Library.",
+              "Berkolaborasi erat dengan Product Manager dan UI/UX Designer dalam A/B Testing halaman landing promo."
+            ]
+          }
+        ],
+        "educations": [
+          {
+            "id": "EDU-1",
+            "institution": "Universitas Indonesia",
+            "degree": "Sarjana Komputer (S.Kom)",
+            "major": "Ilmu Komputer",
+            "startYear": "2016",
+            "endYear": "2020",
+            "gpa": "3.84 / 4.00 (Cum Laude)",
+            "achievements": "Juara 1 Hackathon Nasional UI/UX & Web Development 2019"
+          }
+        ],
+        "skills": [
+          {
+            "id": "SKL-1",
+            "categoryName": "Hard Skills & Frameworks",
+            "skills": [
+              "React.js",
+              "TypeScript",
+              "Next.js",
+              "Tailwind CSS",
+              "GraphQL",
+              "RESTful API",
+              "Redux Toolkit",
+              "Jest"
+            ]
+          },
+          {
+            "id": "SKL-2",
+            "categoryName": "Tools & DevOps",
+            "skills": [
+              "Git & GitHub",
+              "Figma",
+              "Docker (Basic)",
+              "CI/CD Pipeline",
+              "Postman",
+              "Storybook",
+              "Vercel"
+            ]
+          },
+          {
+            "id": "SKL-3",
+            "categoryName": "Soft Skills & Leadership",
+            "skills": [
+              "Agile / Scrum Leadership",
+              "Problem Solving",
+              "Mentoring Tim",
+              "Komunikasi Lintas Divisi",
+              "Time Management"
+            ]
+          }
+        ]
+      },
+      "customerFormSlug": "form-ord-2025-001284",
+      "customerSubmittedAt": "2026-10-01T01:39:04.952Z",
+      "revisions": [
+        {
+          "id": "REV-1",
+          "version": 1,
+          "requestedAt": "2025-05-18T14:00:00Z",
+          "clientNotes": "Mohon tambahkan sertifikasi AWS dan highlight pengalaman project di LinkAja.",
+          "operatorNotes": "Sudah diakomodasi di draft V2.",
+          "status": "Selesai",
+          "completedAt": "2025-05-18T16:20:00Z"
+        }
+      ],
+      "files": [
+        {
+          "id": "FIL-1",
+          "fileName": "ORD-2025-001284_Bagas_Aditya_CV_ATS_V1_Draft.pdf",
+          "stage": "Draft",
+          "version": 1,
+          "uploadedAt": "2025-05-18T12:00:00Z",
+          "fileSize": "342 KB",
+          "fileType": "pdf"
+        },
+        {
+          "id": "FIL-2",
+          "fileName": "ORD-2025-001284_Bagas_Aditya_CV_ATS_V2_Preview.pdf",
+          "stage": "Preview",
+          "version": 2,
+          "uploadedAt": "2025-05-18T16:30:00Z",
+          "fileSize": "356 KB",
+          "fileType": "pdf"
+        }
+      ],
+      "internalNotes": "Customer minta prioritas sebelum interview hari Rabu jam 10 pagi.",
+      "editRequestStatus": "requested",
+      "editRequestReason": "Ingin mengupdate portfolio project terbaru dari HP",
+      "isFormLocked": true
+    },
+    {
+      "id": "ORD-2025-001285",
+      "marketplace": "Shopee",
+      "marketplaceOrderId": "2405189912BA09",
+      "customerName": "Clara Michelle Simanjuntak",
+      "customerPhone": "085712398124",
+      "customerEmail": "clara.michelle@yahoo.com",
+      "productType": "CV ATS-Friendly",
+      "variation": "Bahasa Indonesia (Standar)",
+      "price": 49000,
+      "orderDate": "2025-05-18T11:45:00Z",
+      "deadlineDate": "2025-05-20T12:00:00Z",
+      "paymentStatus": "Lunas",
+      "status": "Validasi Data",
+      "priority": "Normal",
+      "templateId": "TMP-ATS-01",
+      "assignedStaffId": "STF-002",
+      "customerData": {
+        "id": "CUST-002",
+        "fullName": "Clara Michelle Simanjuntak, S.E.",
+        "professionalTitle": "Human Resources & Talent Acquisition Specialist",
+        "email": "clara.michelle@yahoo.com",
+        "phone": "0857-1239-8124",
+        "city": "Surabaya",
+        "country": "Indonesia",
+        "photoUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
+        "summary": "Talent Acquisition profesional dengan 3+ tahun pengalaman dalam end-to-end recruitment, employer branding, dan employee onboarding di sektor FMCG dan perhotelan internasional.",
+        "targetJobTitle": "Talent Acquisition Partner",
+        "targetCompany": "PT Unilever Indonesia Tbk",
+        "jobVacancySource": "LinkedIn Job Board",
+        "coverLetterNotes": "Tekankan kepemimpinan tim 5 engineer dan pengalaman integrasi micro-frontend perbankan digital.",
+        "educations": [
+          {
+            "id": "EDU-1",
+            "institution": "Universitas Indonesia",
+            "degree": "Sarjana Komputer (S.Kom.)",
+            "major": "Ilmu Komputer",
+            "startYear": "2017",
+            "endYear": "2021",
+            "gpa": "3.82 / 4.00 (Cum Laude)",
+            "achievements": "Juara 1 National Hackathon Gemastik XIV Kategori Software Development 2020."
+          }
+        ],
+        "experiences": [
+          {
+            "id": "EXP-1",
+            "company": "PT Fintek Karya Nusantara (LinkAja)",
+            "position": "Senior Frontend Engineer",
+            "location": "Jakarta (Hybrid)",
+            "startDate": "2022-03",
+            "endDate": "Sekarang",
+            "isCurrent": true,
+            "bulletPoints": [
+              "Memimpin pengembangan modul Merchant Dashboard yang melayani 250.000+ UMKM harian di seluruh Indonesia.",
+              "Mengimplementasikan optimasi Web Vitals (LCP < 1.2s, CLS 0.01) sehingga menaikkan retention rate sebesar 18%.",
+              "Menyusun reusable Design System berbasis Tailwind CSS dan Storybook yang digunakan lintas 4 tim squad engineering.",
+              "Melakukan code review dan mentoring untuk 6 junior & mid-level frontend engineer secara berkala."
+            ]
+          },
+          {
+            "id": "EXP-2",
+            "company": "PT Global Tiket Network (Tiket.com)",
+            "position": "Frontend Developer",
+            "location": "Jakarta",
+            "startDate": "2020-08",
+            "endDate": "2022-02",
+            "isCurrent": false,
+            "bulletPoints": [
+              "Membangun alur checkout hotel & flight internasional dengan React, Redux Toolkit, dan integrasi Payment Gateway.",
+              "Mengurangi error crash rate hingga 0.05% dengan menerapkan testing terotomasi Jest dan React Testing Library.",
+              "Berkolaborasi erat dengan Product Manager dan UI/UX Designer dalam A/B Testing halaman landing promo."
+            ]
+          }
+        ],
+        "skills": [
+          {
+            "id": "SKL-1",
+            "categoryName": "Hard Skills & Frameworks",
+            "skills": [
+              "React.js",
+              "TypeScript",
+              "Next.js",
+              "Tailwind CSS",
+              "GraphQL",
+              "RESTful API",
+              "Redux Toolkit",
+              "Jest"
+            ]
+          },
+          {
+            "id": "SKL-2",
+            "categoryName": "Tools & DevOps",
+            "skills": [
+              "Git & GitHub",
+              "Figma",
+              "Docker (Basic)",
+              "CI/CD Pipeline",
+              "Postman",
+              "Storybook",
+              "Vercel"
+            ]
+          },
+          {
+            "id": "SKL-3",
+            "categoryName": "Soft Skills & Leadership",
+            "skills": [
+              "Agile / Scrum Leadership",
+              "Problem Solving",
+              "Mentoring Tim",
+              "Komunikasi Lintas Divisi",
+              "Time Management"
+            ]
+          }
+        ],
+        "certifications": [
+          {
+            "id": "CRT-1",
+            "title": "AWS Certified Cloud Practitioner",
+            "issuer": "Amazon Web Services (AWS)",
+            "issueDate": "2023",
+            "credentialId": "AWS-9928174"
+          },
+          {
+            "id": "CRT-2",
+            "title": "Meta Front-End Developer Professional Certificate",
+            "issuer": "Meta (Coursera)",
+            "issueDate": "2022"
+          }
+        ],
+        "projects": [
+          {
+            "id": "PRJ-1",
+            "title": "Enterprise Merchant Hub Platform",
+            "category": "Fintech SaaS",
+            "role": "Lead Frontend",
+            "description": "Aplikasi manajemen transaksi multi-outlet real-time untuk pemilik bisnis dengan chart visualisasi analytics dan export invoice.",
+            "technologies": [
+              "React",
+              "TypeScript",
+              "Tailwind CSS",
+              "Recharts",
+              "Socket.io"
+            ],
+            "link": "https://merchanthub.id/preview",
+            "date": "2023"
+          },
+          {
+            "id": "PRJ-2",
+            "title": "CareerCraft ATS Parser Simulator",
+            "category": "Open Source Tool",
+            "role": "Creator & Maintainer",
+            "description": "Alat penguji kompatibilitas CV terhadap algoritma sistem Applicant Tracking System dengan visualisasi skor kecocokan kata kunci.",
+            "technologies": [
+              "Next.js",
+              "WebAssembly",
+              "Tailwind CSS"
+            ],
+            "link": "https://github.com/bagasaditya/ats-simulator",
+            "date": "2022"
+          }
+        ],
+        "languages": [
+          {
+            "id": "LNG-1",
+            "language": "Bahasa Indonesia",
+            "proficiency": "Penutur Asli"
+          },
+          {
+            "id": "LNG-2",
+            "language": "Bahasa Inggris",
+            "proficiency": "Fasih"
+          }
+        ],
+        "socialLinks": [
+          {
+            "id": "SOC-1",
+            "platform": "LinkedIn",
+            "url": "https://linkedin.com/in/bagasadityapratama"
+          },
+          {
+            "id": "SOC-2",
+            "platform": "GitHub",
+            "url": "https://github.com/bagasaditya"
+          },
+          {
+            "id": "SOC-3",
+            "platform": "Portfolio Web",
+            "url": "https://bagasaditya.dev"
+          }
+        ],
+        "lastUpdated": "2025-05-18T10:30:00Z"
+      },
+      "customerFormSlug": "form-ord-2025-001285",
+      "customerSubmittedAt": "2025-05-18T12:10:00Z",
+      "revisions": [],
+      "files": [],
+      "internalNotes": "Data lengkap, tinggal operator assign ke designer."
+    },
+    {
+      "id": "ORD-2025-001286",
+      "marketplace": "Tokopedia",
+      "marketplaceOrderId": "INV/20250518/MPL/449128",
+      "customerName": "Deni Kurniawan",
+      "customerPhone": "087811223344",
+      "customerEmail": "deni.kurniawan@gmail.com",
+      "productType": "CV Kreatif / Desain",
+      "variation": "Bahasa Indonesia + Custom Color",
+      "price": 79000,
+      "orderDate": "2025-05-18T13:20:00Z",
+      "deadlineDate": "2025-05-21T18:00:00Z",
+      "paymentStatus": "Lunas",
+      "status": "Menunggu Data",
+      "priority": "Normal",
+      "templateId": "TMP-CRE-01",
+      "assignedStaffId": "STF-002",
+      "customerData": {
+        "id": "CUST-003",
+        "fullName": "Deni Kurniawan",
+        "professionalTitle": "",
+        "email": "deni.kurniawan@gmail.com",
+        "phone": "0878-1122-3344",
+        "city": "",
+        "country": "Indonesia",
+        "photoUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
+        "summary": "",
+        "targetJobTitle": "Lead Frontend Developer",
+        "targetCompany": "PT Bank Central Asia Tbk / Tiket.com",
+        "jobVacancySource": "LinkedIn Job Board",
+        "coverLetterNotes": "Tekankan kepemimpinan tim 5 engineer dan pengalaman integrasi micro-frontend perbankan digital.",
+        "educations": [],
+        "experiences": [],
+        "skills": [],
+        "certifications": [],
+        "projects": [],
+        "languages": [],
+        "socialLinks": [],
+        "lastUpdated": "2025-05-18T10:30:00Z"
+      },
+      "customerFormSlug": "form-ord-2025-001286",
+      "revisions": [],
+      "files": [],
+      "internalNotes": "Sudah dikirimkan WhatsApp pengingat form data pukul 13:30.",
+      "customerSubmittedAt": "2026-09-30T08:00:44.425Z",
+      "isFormLocked": false,
+      "editRequestStatus": "approved"
+    },
+    {
+      "id": "ORD-2025-001287",
+      "marketplace": "WhatsApp",
+      "marketplaceOrderId": "WA-20250518-091",
+      "customerName": "Fajar Nugraha",
+      "customerPhone": "081399882211",
+      "customerEmail": "fajar.nugraha@corporate.id",
+      "productType": "Executive Resume & Bio",
+      "variation": "English (Executive 2 Halaman)",
+      "price": 249000,
+      "orderDate": "2025-05-17T15:00:00Z",
+      "deadlineDate": "2025-05-19T18:00:00Z",
+      "paymentStatus": "Lunas",
+      "status": "Preview",
+      "priority": "Urgent",
+      "templateId": "TMP-EXE-01",
+      "assignedStaffId": "STF-004",
+      "customerData": {
+        "id": "CUST-004",
+        "fullName": "Fajar Nugraha, M.B.A.",
+        "professionalTitle": "Head of Commercial Operations & Growth Strategy",
+        "email": "fajar.nugraha@corporate.id",
+        "phone": "0813-9988-2211",
+        "city": "Jakarta Pusat",
+        "country": "Indonesia",
+        "photoUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
+        "summary": "Senior business leader with 10+ years driving revenue acceleration, P&L management, and operational restructuring across SEA fast-moving tech unicorns.",
+        "targetJobTitle": "Lead Frontend Developer",
+        "targetCompany": "PT Bank Central Asia Tbk / Tiket.com",
+        "jobVacancySource": "LinkedIn Job Board",
+        "coverLetterNotes": "Tekankan kepemimpinan tim 5 engineer dan pengalaman integrasi micro-frontend perbankan digital.",
+        "educations": [
+          {
+            "id": "EDU-1",
+            "institution": "Universitas Indonesia",
+            "degree": "Sarjana Komputer (S.Kom.)",
+            "major": "Ilmu Komputer",
+            "startYear": "2017",
+            "endYear": "2021",
+            "gpa": "3.82 / 4.00 (Cum Laude)",
+            "achievements": "Juara 1 National Hackathon Gemastik XIV Kategori Software Development 2020."
+          }
+        ],
+        "experiences": [
+          {
+            "id": "EXP-1",
+            "company": "PT Fintek Karya Nusantara (LinkAja)",
+            "position": "Senior Frontend Engineer",
+            "location": "Jakarta (Hybrid)",
+            "startDate": "2022-03",
+            "endDate": "Sekarang",
+            "isCurrent": true,
+            "bulletPoints": [
+              "Memimpin pengembangan modul Merchant Dashboard yang melayani 250.000+ UMKM harian di seluruh Indonesia.",
+              "Mengimplementasikan optimasi Web Vitals (LCP < 1.2s, CLS 0.01) sehingga menaikkan retention rate sebesar 18%.",
+              "Menyusun reusable Design System berbasis Tailwind CSS dan Storybook yang digunakan lintas 4 tim squad engineering.",
+              "Melakukan code review dan mentoring untuk 6 junior & mid-level frontend engineer secara berkala."
+            ]
+          },
+          {
+            "id": "EXP-2",
+            "company": "PT Global Tiket Network (Tiket.com)",
+            "position": "Frontend Developer",
+            "location": "Jakarta",
+            "startDate": "2020-08",
+            "endDate": "2022-02",
+            "isCurrent": false,
+            "bulletPoints": [
+              "Membangun alur checkout hotel & flight internasional dengan React, Redux Toolkit, dan integrasi Payment Gateway.",
+              "Mengurangi error crash rate hingga 0.05% dengan menerapkan testing terotomasi Jest dan React Testing Library.",
+              "Berkolaborasi erat dengan Product Manager dan UI/UX Designer dalam A/B Testing halaman landing promo."
+            ]
+          }
+        ],
+        "skills": [
+          {
+            "id": "SKL-1",
+            "categoryName": "Hard Skills & Frameworks",
+            "skills": [
+              "React.js",
+              "TypeScript",
+              "Next.js",
+              "Tailwind CSS",
+              "GraphQL",
+              "RESTful API",
+              "Redux Toolkit",
+              "Jest"
+            ]
+          },
+          {
+            "id": "SKL-2",
+            "categoryName": "Tools & DevOps",
+            "skills": [
+              "Git & GitHub",
+              "Figma",
+              "Docker (Basic)",
+              "CI/CD Pipeline",
+              "Postman",
+              "Storybook",
+              "Vercel"
+            ]
+          },
+          {
+            "id": "SKL-3",
+            "categoryName": "Soft Skills & Leadership",
+            "skills": [
+              "Agile / Scrum Leadership",
+              "Problem Solving",
+              "Mentoring Tim",
+              "Komunikasi Lintas Divisi",
+              "Time Management"
+            ]
+          }
+        ],
+        "certifications": [
+          {
+            "id": "CRT-1",
+            "title": "AWS Certified Cloud Practitioner",
+            "issuer": "Amazon Web Services (AWS)",
+            "issueDate": "2023",
+            "credentialId": "AWS-9928174"
+          },
+          {
+            "id": "CRT-2",
+            "title": "Meta Front-End Developer Professional Certificate",
+            "issuer": "Meta (Coursera)",
+            "issueDate": "2022"
+          }
+        ],
+        "projects": [
+          {
+            "id": "PRJ-1",
+            "title": "Enterprise Merchant Hub Platform",
+            "category": "Fintech SaaS",
+            "role": "Lead Frontend",
+            "description": "Aplikasi manajemen transaksi multi-outlet real-time untuk pemilik bisnis dengan chart visualisasi analytics dan export invoice.",
+            "technologies": [
+              "React",
+              "TypeScript",
+              "Tailwind CSS",
+              "Recharts",
+              "Socket.io"
+            ],
+            "link": "https://merchanthub.id/preview",
+            "date": "2023"
+          },
+          {
+            "id": "PRJ-2",
+            "title": "CareerCraft ATS Parser Simulator",
+            "category": "Open Source Tool",
+            "role": "Creator & Maintainer",
+            "description": "Alat penguji kompatibilitas CV terhadap algoritma sistem Applicant Tracking System dengan visualisasi skor kecocokan kata kunci.",
+            "technologies": [
+              "Next.js",
+              "WebAssembly",
+              "Tailwind CSS"
+            ],
+            "link": "https://github.com/bagasaditya/ats-simulator",
+            "date": "2022"
+          }
+        ],
+        "languages": [
+          {
+            "id": "LNG-1",
+            "language": "Bahasa Indonesia",
+            "proficiency": "Penutur Asli"
+          },
+          {
+            "id": "LNG-2",
+            "language": "Bahasa Inggris",
+            "proficiency": "Fasih"
+          }
+        ],
+        "socialLinks": [
+          {
+            "id": "SOC-1",
+            "platform": "LinkedIn",
+            "url": "https://linkedin.com/in/bagasadityapratama"
+          },
+          {
+            "id": "SOC-2",
+            "platform": "GitHub",
+            "url": "https://github.com/bagasaditya"
+          },
+          {
+            "id": "SOC-3",
+            "platform": "Portfolio Web",
+            "url": "https://bagasaditya.dev"
+          }
+        ],
+        "lastUpdated": "2025-05-18T10:30:00Z"
+      },
+      "customerFormSlug": "form-ord-2025-001287",
+      "customerSubmittedAt": "2025-05-17T16:00:00Z",
+      "revisions": [],
+      "files": [
+        {
+          "id": "FIL-4",
+          "fileName": "ORD-2025-001287_Fajar_Nugraha_Executive_Resume_V1_Preview.pdf",
+          "stage": "Preview",
+          "version": 1,
+          "uploadedAt": "2025-05-18T10:00:00Z",
+          "fileSize": "410 KB",
+          "fileType": "pdf"
+        }
+      ],
+      "internalNotes": "Preview sudah dikirim ke WhatsApp client, menunggu approval."
+    },
+    {
+      "id": "ORD-2025-001288",
+      "marketplace": "Shopee",
+      "marketplaceOrderId": "2405177199ZX82",
+      "customerName": "Nadia Salsabila",
+      "customerPhone": "082199334455",
+      "customerEmail": "nadia.salsabila@gmail.com",
+      "productType": "Cover Letter / Surat Lamaran",
+      "variation": "Bahasa Indonesia + Word Editable",
+      "price": 39000,
+      "orderDate": "2025-05-17T10:00:00Z",
+      "deadlineDate": "2025-05-18T18:00:00Z",
+      "paymentStatus": "Lunas",
+      "status": "Selesai",
+      "priority": "Normal",
+      "templateId": "TMP-CL-01",
+      "assignedStaffId": "STF-003",
+      "customerData": {
+        "id": "CUST-005",
+        "fullName": "Nadia Salsabila, S.I.Kom.",
+        "professionalTitle": "Digital Marketing & Content Strategist",
+        "email": "nadia.salsabila@gmail.com",
+        "phone": "0821-9933-4455",
+        "city": "Bandung",
+        "country": "Indonesia",
+        "photoUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
+        "summary": "Content strategist dan copywriter kreatif dengan portofolio mengelola social media campaign brand beauty ternama dengan engagement rate 6.8%.",
+        "targetJobTitle": "Lead Frontend Developer",
+        "targetCompany": "PT Bank Central Asia Tbk / Tiket.com",
+        "jobVacancySource": "LinkedIn Job Board",
+        "coverLetterNotes": "Tekankan kepemimpinan tim 5 engineer dan pengalaman integrasi micro-frontend perbankan digital.",
+        "educations": [
+          {
+            "id": "EDU-1",
+            "institution": "Universitas Indonesia",
+            "degree": "Sarjana Komputer (S.Kom.)",
+            "major": "Ilmu Komputer",
+            "startYear": "2017",
+            "endYear": "2021",
+            "gpa": "3.82 / 4.00 (Cum Laude)",
+            "achievements": "Juara 1 National Hackathon Gemastik XIV Kategori Software Development 2020."
+          }
+        ],
+        "experiences": [
+          {
+            "id": "EXP-1",
+            "company": "PT Fintek Karya Nusantara (LinkAja)",
+            "position": "Senior Frontend Engineer",
+            "location": "Jakarta (Hybrid)",
+            "startDate": "2022-03",
+            "endDate": "Sekarang",
+            "isCurrent": true,
+            "bulletPoints": [
+              "Memimpin pengembangan modul Merchant Dashboard yang melayani 250.000+ UMKM harian di seluruh Indonesia.",
+              "Mengimplementasikan optimasi Web Vitals (LCP < 1.2s, CLS 0.01) sehingga menaikkan retention rate sebesar 18%.",
+              "Menyusun reusable Design System berbasis Tailwind CSS dan Storybook yang digunakan lintas 4 tim squad engineering.",
+              "Melakukan code review dan mentoring untuk 6 junior & mid-level frontend engineer secara berkala."
+            ]
+          },
+          {
+            "id": "EXP-2",
+            "company": "PT Global Tiket Network (Tiket.com)",
+            "position": "Frontend Developer",
+            "location": "Jakarta",
+            "startDate": "2020-08",
+            "endDate": "2022-02",
+            "isCurrent": false,
+            "bulletPoints": [
+              "Membangun alur checkout hotel & flight internasional dengan React, Redux Toolkit, dan integrasi Payment Gateway.",
+              "Mengurangi error crash rate hingga 0.05% dengan menerapkan testing terotomasi Jest dan React Testing Library.",
+              "Berkolaborasi erat dengan Product Manager dan UI/UX Designer dalam A/B Testing halaman landing promo."
+            ]
+          }
+        ],
+        "skills": [
+          {
+            "id": "SKL-1",
+            "categoryName": "Hard Skills & Frameworks",
+            "skills": [
+              "React.js",
+              "TypeScript",
+              "Next.js",
+              "Tailwind CSS",
+              "GraphQL",
+              "RESTful API",
+              "Redux Toolkit",
+              "Jest"
+            ]
+          },
+          {
+            "id": "SKL-2",
+            "categoryName": "Tools & DevOps",
+            "skills": [
+              "Git & GitHub",
+              "Figma",
+              "Docker (Basic)",
+              "CI/CD Pipeline",
+              "Postman",
+              "Storybook",
+              "Vercel"
+            ]
+          },
+          {
+            "id": "SKL-3",
+            "categoryName": "Soft Skills & Leadership",
+            "skills": [
+              "Agile / Scrum Leadership",
+              "Problem Solving",
+              "Mentoring Tim",
+              "Komunikasi Lintas Divisi",
+              "Time Management"
+            ]
+          }
+        ],
+        "certifications": [
+          {
+            "id": "CRT-1",
+            "title": "AWS Certified Cloud Practitioner",
+            "issuer": "Amazon Web Services (AWS)",
+            "issueDate": "2023",
+            "credentialId": "AWS-9928174"
+          },
+          {
+            "id": "CRT-2",
+            "title": "Meta Front-End Developer Professional Certificate",
+            "issuer": "Meta (Coursera)",
+            "issueDate": "2022"
+          }
+        ],
+        "projects": [
+          {
+            "id": "PRJ-1",
+            "title": "Enterprise Merchant Hub Platform",
+            "category": "Fintech SaaS",
+            "role": "Lead Frontend",
+            "description": "Aplikasi manajemen transaksi multi-outlet real-time untuk pemilik bisnis dengan chart visualisasi analytics dan export invoice.",
+            "technologies": [
+              "React",
+              "TypeScript",
+              "Tailwind CSS",
+              "Recharts",
+              "Socket.io"
+            ],
+            "link": "https://merchanthub.id/preview",
+            "date": "2023"
+          },
+          {
+            "id": "PRJ-2",
+            "title": "CareerCraft ATS Parser Simulator",
+            "category": "Open Source Tool",
+            "role": "Creator & Maintainer",
+            "description": "Alat penguji kompatibilitas CV terhadap algoritma sistem Applicant Tracking System dengan visualisasi skor kecocokan kata kunci.",
+            "technologies": [
+              "Next.js",
+              "WebAssembly",
+              "Tailwind CSS"
+            ],
+            "link": "https://github.com/bagasaditya/ats-simulator",
+            "date": "2022"
+          }
+        ],
+        "languages": [
+          {
+            "id": "LNG-1",
+            "language": "Bahasa Indonesia",
+            "proficiency": "Penutur Asli"
+          },
+          {
+            "id": "LNG-2",
+            "language": "Bahasa Inggris",
+            "proficiency": "Fasih"
+          }
+        ],
+        "socialLinks": [
+          {
+            "id": "SOC-1",
+            "platform": "LinkedIn",
+            "url": "https://linkedin.com/in/bagasadityapratama"
+          },
+          {
+            "id": "SOC-2",
+            "platform": "GitHub",
+            "url": "https://github.com/bagasaditya"
+          },
+          {
+            "id": "SOC-3",
+            "platform": "Portfolio Web",
+            "url": "https://bagasaditya.dev"
+          }
+        ],
+        "lastUpdated": "2025-05-18T10:30:00Z"
+      },
+      "customerFormSlug": "form-ord-2025-001288",
+      "customerSubmittedAt": "2025-05-17T11:00:00Z",
+      "revisions": [],
+      "files": [
+        {
+          "id": "FIL-5",
+          "fileName": "ORD-2025-001288_Nadia_Salsabila_Cover_Letter_V1_Final.pdf",
+          "stage": "Final",
+          "version": 1,
+          "uploadedAt": "2025-05-18T08:30:00Z",
+          "fileSize": "280 KB",
+          "fileType": "pdf"
+        }
+      ],
+      "internalNotes": "Pesanan telah selesai dan dikirim ke email & Shopee Chat."
+    },
+    {
+      "id": "ORD-2026-001295",
+      "marketplace": "WhatsApp",
+      "marketplaceOrderId": "",
+      "customerName": "Bambang Sudarmono, S.T.",
+      "customerPhone": "0857-4433-2211",
+      "customerEmail": "klien@gmail.com",
+      "productType": "Paket Komplit (CV + Portfolio + CL)",
+      "variation": "Standar",
+      "price": 99000,
+      "orderDate": "2026-09-30T08:50:47.190Z",
+      "deadlineDate": "2026-10-02T08:50:47.190Z",
+      "paymentStatus": "Lunas",
+      "status": "Menunggu Data",
+      "priority": "Normal",
+      "templateId": "TMP-ATS-01",
+      "customerData": {
+        "id": "CUST-ORD-2026-001295",
+        "fullName": "Bambang Sudarmono, S.T.",
+        "professionalTitle": "",
+        "email": "",
+        "phone": "0857-4433-2211",
+        "city": "",
+        "country": "Indonesia",
+        "summary": "",
+        "educations": [],
+        "experiences": [],
+        "skills": [
+          {
+            "id": "SKL-1",
+            "categoryName": "Hard Skills & Tools",
+            "skills": []
+          },
+          {
+            "id": "SKL-2",
+            "categoryName": "Soft Skills",
+            "skills": []
+          }
+        ],
+        "certifications": [],
+        "projects": [],
+        "languages": [
+          {
+            "id": "LNG-1",
+            "language": "Bahasa Indonesia",
+            "proficiency": "Penutur Asli"
+          },
+          {
+            "id": "LNG-2",
+            "language": "Bahasa Inggris",
+            "proficiency": "Profesional"
+          }
+        ],
+        "socialLinks": [],
+        "lastUpdated": "2026-09-30T08:50:47.190Z"
+      },
+      "customerFormSlug": "form-ord-2026-001295",
+      "revisions": [],
+      "files": [],
+      "internalNotes": "Otomatis disinkronkan dari Shopee Open Platform API v2. No. Pesanan Shopee: 240988685774 (SKU: SKU-PKT-KOMPLIT)",
+      "isFormLocked": false,
+      "editRequestStatus": "none"
+    },
+    {
+      "id": "ORD-2026-001294",
+      "marketplace": "Shopee",
+      "marketplaceOrderId": "240920073535",
+      "customerName": "Bambang Sudarmono, S.T.",
+      "customerPhone": "0857-4433-2211",
+      "customerEmail": "bambang.sudarmono@yahoo.com",
+      "productType": "Paket Komplit (CV + Portfolio + CL)",
+      "variation": "Paket All-in (CV + Portfolio + CL)",
+      "price": 135000,
+      "orderDate": "2026-09-30T08:38:31.762Z",
+      "deadlineDate": "2026-10-02T08:38:31.762Z",
+      "paymentStatus": "Lunas",
+      "status": "Menunggu Data",
+      "priority": "Normal",
+      "templateId": "TMP-ATS-01",
+      "customerData": {
+        "id": "CUST-1762",
+        "fullName": "Bambang Sudarmono, S.T.",
+        "professionalTitle": "",
+        "email": "bambang.sudarmono@yahoo.com",
+        "phone": "0857-4433-2211",
+        "city": "",
+        "country": "Indonesia",
+        "summary": "",
+        "educations": [],
+        "experiences": [],
+        "skills": [],
+        "certifications": [],
+        "projects": [],
+        "languages": [],
+        "socialLinks": [],
+        "lastUpdated": "2026-09-30T08:38:31.762Z"
+      },
+      "customerFormSlug": "form-ord-2026-001294",
+      "revisions": [],
+      "files": [],
+      "internalNotes": "Otomatis disinkronkan dari Shopee Open Platform API v2. No. Pesanan Shopee: 240920073535 (SKU: SKU-PKT-KOMPLIT)"
+    },
+    {
+      "id": "ORD-2026-001293",
+      "marketplace": "Shopee",
+      "marketplaceOrderId": "240915019048",
+      "customerName": "Vania Clarissa",
+      "customerPhone": "0812-7766-5544",
+      "customerEmail": "vania.clarissa@gmail.com",
+      "productType": "CV Kreatif / Desain",
+      "variation": "Desain Modern Bold",
+      "price": 65000,
+      "orderDate": "2026-09-30T08:36:32.719Z",
+      "deadlineDate": "2026-10-02T08:36:32.719Z",
+      "paymentStatus": "Lunas",
+      "status": "Menunggu Data",
+      "priority": "Normal",
+      "templateId": "TMP-CRE-01",
+      "customerData": {
+        "id": "CUST-2719",
+        "fullName": "Vania Clarissa",
+        "professionalTitle": "",
+        "email": "vania.clarissa@gmail.com",
+        "phone": "0812-7766-5544",
+        "city": "",
+        "country": "Indonesia",
+        "summary": "",
+        "educations": [],
+        "experiences": [],
+        "skills": [],
+        "certifications": [],
+        "projects": [],
+        "languages": [],
+        "socialLinks": [],
+        "lastUpdated": "2026-09-30T08:36:32.719Z"
+      },
+      "customerFormSlug": "form-ord-2026-001293",
+      "revisions": [],
+      "files": [],
+      "internalNotes": "Otomatis disinkronkan dari Shopee Open Platform API v2. No. Pesanan Shopee: 240915019048 (SKU: SKU-CV-CREATIVE)"
+    },
+    {
+      "id": "ORD-2026-001292",
+      "marketplace": "WhatsApp",
+      "marketplaceOrderId": "",
+      "customerName": "Bambang Sudarmono, S.T.",
+      "customerPhone": "0857-4433-2211",
+      "customerEmail": "strhstrh",
+      "productType": "Paket Komplit (CV + Portfolio + CL)",
+      "variation": "Standar",
+      "price": 99000,
+      "orderDate": "2026-09-30T08:23:36.581Z",
+      "deadlineDate": "2026-10-02T08:23:36.581Z",
+      "paymentStatus": "Lunas",
+      "status": "Data Masuk",
+      "priority": "Normal",
+      "templateId": "TMP-ATS-01",
+      "customerData": {
+        "id": "CUST-ORD-2026-001292",
+        "fullName": "Bambang Sudarmono, S.T.",
+        "professionalTitle": "srthsrthsrt",
+        "email": "strhstrh",
+        "phone": "0857-4433-2211",
+        "city": "strhsrth",
+        "country": "Indonesia",
+        "summary": "srthsrt",
+        "educations": [
+          {
+            "id": "EDU-1790756636574",
+            "institution": "srth",
+            "degree": "",
+            "major": "sth",
+            "startYear": "srth",
+            "endYear": "strh",
+            "gpa": "strh",
+            "achievements": ""
+          }
+        ],
+        "experiences": [
+          {
+            "id": "EXP-1790756630502",
+            "company": "sth",
+            "position": "srth",
+            "location": "srth",
+            "startDate": "srth",
+            "endDate": "sth",
+            "isCurrent": false,
+            "bulletPoints": [
+              "sth"
+            ]
+          }
+        ],
+        "skills": [
+          {
+            "id": "SKL-1",
+            "categoryName": "Hard Skills & Tools",
+            "skills": [
+              "srth"
+            ]
+          },
+          {
+            "id": "SKL-2",
+            "categoryName": "Soft Skills",
+            "skills": [
+              "srth"
+            ]
+          }
+        ],
+        "certifications": [
+          {
+            "id": "CRT-1790756666550",
+            "title": "srth",
+            "issuer": "srth",
+            "issueDate": "srth",
+            "credentialId": ""
+          }
+        ],
+        "projects": [
+          {
+            "id": "PRJ-1790756663670",
+            "title": "srth",
+            "category": "Proyek Karir",
+            "description": "srth",
+            "technologies": [],
+            "link": "",
+            "date": ""
+          }
+        ],
+        "languages": [
+          {
+            "id": "LNG-1",
+            "language": "Bahasa Indonesia",
+            "proficiency": "Penutur Asli"
+          },
+          {
+            "id": "LNG-2",
+            "language": "Bahasa Inggris",
+            "proficiency": "Profesional"
+          }
+        ],
+        "socialLinks": [
+          {
+            "id": "SOC-LI",
+            "platform": "LinkedIn",
+            "url": "srth"
+          },
+          {
+            "id": "SOC-PORT",
+            "platform": "Portfolio Web",
+            "url": "srth"
+          }
+        ],
+        "lastUpdated": "2026-09-30T08:24:34.238Z",
+        "targetJobTitle": "srth",
+        "targetCompany": "sth",
+        "coverLetterNotes": "sth"
+      },
+      "customerFormSlug": "form-ord-2026-001292",
+      "revisions": [],
+      "files": [],
+      "internalNotes": "Otomatis disinkronkan dari Shopee Open Platform API v2. No. Pesanan Shopee: 240987050680 (SKU: SKU-PKT-KOMPLIT)",
+      "isFormLocked": true,
+      "editRequestStatus": "none",
+      "customerSubmittedAt": "2026-09-30T08:24:34.238Z"
+    },
+    {
+      "id": "ORD-2026-001291",
+      "marketplace": "WhatsApp",
+      "marketplaceOrderId": "",
+      "customerName": "arghar",
+      "customerPhone": "0812354652",
+      "customerEmail": "arega.gmail.com",
+      "productType": "CV ATS-Friendly",
+      "variation": "Standar",
+      "price": 99000,
+      "orderDate": "2026-09-30T08:16:57.181Z",
+      "deadlineDate": "2026-10-02T08:16:57.181Z",
+      "paymentStatus": "Lunas",
+      "status": "Data Masuk",
+      "priority": "Normal",
+      "templateId": "TMP-ATS-01",
+      "customerData": {
+        "id": "CUST-ORD-2026-001291",
+        "fullName": "arghar",
+        "professionalTitle": "arga",
+        "email": "arega.gmail.com",
+        "phone": "0812354652",
+        "city": "",
+        "country": "Indonesia",
+        "summary": "rgarehaerhagwregfa",
+        "educations": [
+          {
+            "id": "EDU-1790756290863",
+            "institution": "awegaWE",
+            "degree": "",
+            "major": "wef",
+            "startYear": "2014",
+            "endYear": "2022",
+            "gpa": "3.82",
+            "achievements": ""
+          }
+        ],
+        "experiences": [
+          {
+            "id": "EXP-1790756253534",
+            "company": "argar",
+            "position": "aregaer",
+            "location": "arga",
+            "startDate": "2022-01",
+            "endDate": "2023-10",
+            "isCurrent": false,
+            "bulletPoints": [
+              ""
+            ]
+          }
+        ],
+        "skills": [
+          {
+            "id": "SKL-1",
+            "categoryName": "Hard Skills & Tools",
+            "skills": []
+          },
+          {
+            "id": "SKL-2",
+            "categoryName": "Soft Skills",
+            "skills": []
+          }
+        ],
+        "certifications": [],
+        "projects": [],
+        "languages": [
+          {
+            "id": "LNG-1",
+            "language": "Bahasa Indonesia",
+            "proficiency": "Penutur Asli"
+          },
+          {
+            "id": "LNG-2",
+            "language": "Bahasa Inggris",
+            "proficiency": "Profesional"
+          }
+        ],
+        "socialLinks": [],
+        "lastUpdated": "2026-09-30T08:18:28.078Z"
+      },
+      "customerFormSlug": "form-ord-2026-001291",
+      "revisions": [],
+      "files": [],
+      "internalNotes": "",
+      "isFormLocked": true,
+      "editRequestStatus": "requested",
+      "customerSubmittedAt": "2026-09-30T08:18:28.079Z",
+      "editRequestReason": "afa"
+    },
+    {
+      "id": "ORD-2026-001290",
+      "marketplace": "Shopee",
+      "marketplaceOrderId": "240950259300",
+      "customerName": "Adinda Nurhaliza",
+      "customerPhone": "0813-8899-7711",
+      "customerEmail": "adinda.nurhaliza@gmail.com",
+      "productType": "CV ATS-Friendly",
+      "variation": "Bahasa Indonesia (Express 24 Jam)",
+      "price": 49000,
+      "orderDate": "2026-09-30T07:20:34.946Z",
+      "deadlineDate": "2026-10-02T07:20:34.946Z",
+      "paymentStatus": "Lunas",
+      "status": "Data Masuk",
+      "priority": "Normal",
+      "templateId": "TMP-ATS-01",
+      "customerData": {
+        "id": "CUST-4946",
+        "fullName": "Adinda Nurhaliza",
+        "professionalTitle": "",
+        "email": "adinda.nurhaliza@gmail.com",
+        "phone": "0813-8899-7711",
+        "city": "",
+        "country": "Indonesia",
+        "summary": "",
+        "educations": [],
+        "experiences": [],
+        "skills": [],
+        "certifications": [],
+        "projects": [],
+        "languages": [],
+        "socialLinks": [],
+        "lastUpdated": "2026-09-30T07:20:34.946Z"
+      },
+      "customerFormSlug": "form-ord-2026-001290",
+      "revisions": [],
+      "files": [
+        {
+          "fileName": "ORD-2026-001290_Adinda_Nurhaliza_CV_ATS_V1_Final.pdf",
+          "stage": "Final",
+          "version": 1,
+          "uploadedAt": "2026-09-30T07:27:40.578Z",
+          "fileSize": "352 KB",
+          "fileType": "pdf",
+          "id": "FIL-1790753260579"
+        }
+      ],
+      "internalNotes": "Otomatis disinkronkan dari Shopee Open Platform API v2. No. Pesanan Shopee: 240950259300 (SKU: SKU-CV-ATS-01)",
+      "customerSubmittedAt": "2026-09-30T07:27:38.114Z"
+    },
+    {
+      "id": "ORD-2026-001289",
+      "marketplace": "Shopee",
+      "marketplaceOrderId": "240578435478",
+      "customerName": "Rizky Firmansyah",
+      "customerPhone": "081288491029",
+      "customerEmail": "rizky.firmansyah@gmail.com",
+      "productType": "Paket Komplit (CV + Portfolio + CL)",
+      "variation": "Bahasa Indonesia (Standar)",
+      "price": 189000,
+      "orderDate": "2026-09-30T04:54:48.071Z",
+      "deadlineDate": "2026-10-02T04:54:48.071Z",
+      "paymentStatus": "Lunas",
+      "status": "Data Masuk",
+      "priority": "Normal",
+      "templateId": "TMP-ATS-01",
+      "customerData": {
+        "id": "CUST-8071",
+        "fullName": "Rizky Firmansyah",
+        "professionalTitle": "",
+        "email": "rizky.firmansyah@gmail.com",
+        "phone": "081288491029",
+        "city": "",
+        "country": "Indonesia",
+        "summary": "",
+        "educations": [],
+        "experiences": [],
+        "skills": [],
+        "certifications": [],
+        "projects": [],
+        "languages": [],
+        "socialLinks": [],
+        "lastUpdated": "2026-09-30T04:54:48.071Z",
+        "testimonials": [
+          {
+            "id": "TESTI-1",
+            "clientName": "Ir. Hendra Gunawan",
+            "clientRole": "VP of Engineering",
+            "company": "PT Fintech Karya Nusantara",
+            "feedback": "Bagas sangat mahir dalam mentransformasikan requirement kompleks menjadi UI produk digital yang scalable dan user-friendly."
+          }
+        ]
+      },
+      "customerFormSlug": "form-ord-2026-001289",
+      "revisions": [],
+      "files": [],
+      "internalNotes": "Pesanan otomatis terintegrasi dari Shopee Shop ID 89104421. SKU: ARISE-PAKET-KOMPLIT-03",
+      "customerSubmittedAt": "2026-09-30T07:25:59.683Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "NOTIF-1790818744966",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_requested",
+      "title": "🔔 Permintaan Ubah Data dari HP/Klien",
+      "message": "Klien Bagas Aditya Pratama (#ORD-2025-001284) meminta izin ubah data: \"Ingin mengupdate portfolio project terbaru dari HP\".",
+      "timestamp": "2026-10-01T01:39:04.966Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790818744952",
+      "orderId": "ORD-2025-001284",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien Bagas Aditya Pratama telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2025-001284 (Paket Komplit (CV + Portfolio + CL)).",
+      "timestamp": "2026-10-01T01:39:04.952Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790783851405",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_requested",
+      "title": "🔔 Permintaan Ubah Data dari HP/Klien",
+      "message": "Klien Bagas Aditya Pratama (#ORD-2025-001284) meminta izin ubah data: \"Update via Portal Client HP\".",
+      "timestamp": "2026-09-30T15:57:31.405Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790783851396",
+      "orderId": "ORD-2025-001284",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien Bagas Aditya Pratama telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2025-001284 (Paket Komplit (CV + Portfolio + CL)).",
+      "timestamp": "2026-09-30T15:57:31.396Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790783293774",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_approved",
+      "title": "🔓 Izin Edit Disetujui",
+      "message": "Formulir pesanan ORD-2025-001284 (Bagas Aditya Pratama) telah dibuka kuncinya agar klien dapat memperbarui data di HP/PC.",
+      "timestamp": "2026-09-30T15:48:13.774Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790783280502",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_requested",
+      "title": "🔔 Permintaan Ubah Data dari HP/Klien",
+      "message": "Klien Bagas Aditya Pratama (#ORD-2025-001284) meminta izin ubah data: \"fzdf\".",
+      "timestamp": "2026-09-30T15:48:00.502Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790783280500",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_requested",
+      "title": "🔔 Permintaan Ubah Data dari HP/Klien",
+      "message": "Klien Bagas Aditya Pratama (#ORD-2025-001284) meminta izin ubah data: \"fzdf\".",
+      "timestamp": "2026-09-30T15:48:00.500Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790783195100",
+      "orderId": "ORD-2025-001284",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien Bagas Aditya Pratama telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2025-001284 (Paket Komplit (CV + Portfolio + CL)).",
+      "timestamp": "2026-09-30T15:46:35.100Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790783176350",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_approved",
+      "title": "🔓 Izin Edit Disetujui",
+      "message": "Formulir pesanan ORD-2025-001284 (Bagas Aditya Pratama) telah dibuka kuncinya agar klien dapat memperbarui data di HP/PC.",
+      "timestamp": "2026-09-30T15:46:16.350Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790783170527",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_requested",
+      "title": "🔔 Permintaan Ubah Data dari HP/Klien",
+      "message": "Klien Bagas Aditya Pratama (#ORD-2025-001284) meminta izin ubah data: \"Update sertifikasi AI\".",
+      "timestamp": "2026-09-30T15:46:10.527Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790781694981",
+      "orderId": "ORD-2025-001284",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien Bagas Aditya Pratama telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2025-001284 (Paket Komplit (CV + Portfolio + CL)).",
+      "timestamp": "2026-09-30T15:21:34.981Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790781667234",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_approved",
+      "title": "🔓 Izin Edit Disetujui",
+      "message": "Formulir pesanan ORD-2025-001284 (Bagas Aditya Pratama) telah dibuka kuncinya agar klien dapat memperbarui data di HP/PC.",
+      "timestamp": "2026-09-30T15:21:07.234Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790781654057",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_requested",
+      "title": "🔔 Permintaan Ubah Data dari HP/Klien",
+      "message": "Klien Bagas Aditya Pratama (#ORD-2025-001284) meminta izin ubah data: \"fafaegw\".",
+      "timestamp": "2026-09-30T15:20:54.057Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    }
+  ],
+  "lastUpdated": "2026-10-01T01:39:04.966Z"
+}

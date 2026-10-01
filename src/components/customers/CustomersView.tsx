@@ -23,6 +23,7 @@ interface Props {
   orders: Order[];
   onSelectOrder: (order: Order) => void;
   onOpenCustomerFormPortal: (order: Order) => void;
+  onOpenCreateOrderWithCustomer?: (customer: CustomerProfile) => void;
   onShowToast: (msg: string) => void;
 }
 
@@ -30,6 +31,7 @@ export const CustomersView: React.FC<Props> = ({
   orders,
   onSelectOrder,
   onOpenCustomerFormPortal,
+  onOpenCreateOrderWithCustomer,
   onShowToast
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -280,6 +282,7 @@ export const CustomersView: React.FC<Props> = ({
             setIsEditModalOpen(true);
           }}
           onSelectOrder={onSelectOrder}
+          onCreateOrder={onOpenCreateOrderWithCustomer}
           onShowToast={onShowToast}
         />
       )}

@@ -99,21 +99,86 @@ export function generateStandardFileName(
   return `${orderId}_${cleanName}_${cleanProduct}_V${version}_${stage}.${ext}`;
 }
 
+export function getPublicBaseUrl(): string {
+  if (typeof window === 'undefined') return '';
+
+  // 1. Check user configured public URL in Settings
+  try {
+    const saved = localStorage.getItem('arise_settings_v2');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.publicAppUrl && typeof parsed.publicAppUrl === 'string' && parsed.publicAppUrl.trim()) {
+        let clean = parsed.publicAppUrl.trim().replace(/\/+$/, '');
+        // Fix legacy buggy ais-pre- rewrite that causes 404
+        if (clean.includes('ais-pre-')) {
+          clean = clean.replace('ais-pre-', 'ais-dev-');
+        }
+        return clean;
+      }
+    }
+  } catch {}
+
+  // 2. Check environment variable VITE_APP_URL
+  try {
+    if (import.meta.env?.VITE_APP_URL) {
+      let envUrl = (import.meta.env.VITE_APP_URL as string).trim().replace(/\/+$/, '');
+      if (envUrl.includes('ais-pre-')) {
+        envUrl = envUrl.replace('ais-pre-', 'ais-dev-');
+      }
+      if (envUrl) return envUrl;
+    }
+  } catch {}
+
+  const { origin, hostname } = window.location;
+
+  // 3. If accessed on localhost or 127.0.0.1, check if an injected or global public URL exists
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    if (typeof (window as any).__PUBLIC_APP_URL__ === 'string' && (window as any).__PUBLIC_APP_URL__) {
+      return (window as any).__PUBLIC_APP_URL__.replace(/\/+$/, '');
+    }
+    if (import.meta.env?.VITE_APP_URL) {
+      return (import.meta.env.VITE_APP_URL as string).trim().replace(/\/+$/, '');
+    }
+  }
+
+  // 4. In cloud/AI Studio or production web runner:
+  // NEVER rewrite ais-dev- to ais-pre-!
+  // In Google AI Studio, ais-dev-... is the live, active, accessible URL.
+  // Replacing it with ais-pre-... leads to DNS/HTTP 404 Not Found on mobile.
+  return origin;
+}
+
+export function generatePortalToken(orderId: string): string {
+  let hash = 0;
+  const str = `arise_craft_${orderId}_portal_v1`;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(36).padStart(8, '0');
+}
+
 export function generateClientFormUrl(
   orderId: string,
   customerName?: string,
   productType?: string,
   phone?: string
 ): string {
-  if (typeof window === 'undefined') return `/form-${orderId}`;
-  
-  const baseUrl = window.location.origin + window.location.pathname;
+  const cleanId = (orderId || '').trim();
+  if (typeof window === 'undefined') return `/portal/${cleanId}`;
+
+  const baseUrl = getPublicBaseUrl();
+  const token = generatePortalToken(cleanId);
   const params = new URLSearchParams();
-  params.set('client_form', orderId);
+  params.set('client_form', cleanId);
+  params.set('token', token);
   if (customerName) params.set('c', customerName);
   if (productType) params.set('p', productType);
   if (phone) params.set('ph', phone);
-  return `${baseUrl}?${params.toString()}`;
+
+  const cleanBase = baseUrl ? `${baseUrl.replace(/\/+$/, '')}/` : '/';
+  return `${cleanBase}?${params.toString()}`;
 }
 
 export function generateWhatsAppLink(phone: string, text: string): string {

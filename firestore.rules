@@ -7,6 +7,9 @@ service cloud.firestore {
     match /notifications/{notificationId} {
       allow read, write: if true;
     }
+    match /_debug_test/{testId} {
+      allow read, write, delete: if true;
+    }
     match /{document=**} {
       allow read, write: if false;
     }

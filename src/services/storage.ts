@@ -185,13 +185,8 @@ async function syncFromServerApi() {
               localOrders.unshift(so);
               hasNewOrUpdated = true;
             } else {
-              // Check if server order has newer customer submitted data or edit request status
-              if (
-                so.customerSubmittedAt !== lo.customerSubmittedAt ||
-                so.editRequestStatus !== lo.editRequestStatus ||
-                so.isFormLocked !== lo.isFormLocked ||
-                so.status !== lo.status
-              ) {
+              // Compare JSON to detect ANY updates from database (customerData, status, isFormLocked, editRequestStatus)
+              if (JSON.stringify(so) !== JSON.stringify(lo)) {
                 Object.assign(lo, so);
                 hasNewOrUpdated = true;
               }
@@ -237,25 +232,14 @@ async function syncFromServerApi() {
   }
 }
 
-// Start background server sync polling
+// Start background server sync polling (Read from Firestore Server as Source of Truth)
 if (typeof window !== 'undefined') {
   setTimeout(() => {
-    try {
-      const initialOrders = storageService.getOrders();
-      if (initialOrders && initialOrders.length > 0) {
-        fetch('/api/orders/batch-sync', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orders: initialOrders })
-        }).catch(() => {});
-      }
-    } catch {}
-
     syncFromServerApi().catch(() => {});
     setInterval(() => {
       syncFromServerApi().catch(() => {});
     }, 2000);
-  }, 500);
+  }, 100);
 }
 
 function notify() {

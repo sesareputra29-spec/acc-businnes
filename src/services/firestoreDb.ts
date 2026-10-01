@@ -5,6 +5,7 @@ import {
   getDocs,
   setDoc,
   updateDoc,
+  deleteDoc,
   query,
   orderBy,
   limit
@@ -293,5 +294,32 @@ export const firestoreDb = {
       promises.push(updateDoc(docSnap.ref, { isRead: true }));
     });
     await Promise.all(promises);
+  },
+
+  async runDiagnosticTest(): Promise<{ write: 'PASS' | 'FAIL'; readBack: 'PASS' | 'FAIL'; delete: 'PASS' | 'FAIL'; latencyMs: number }> {
+    const start = Date.now();
+    const testId = `diag_test_${Date.now()}`;
+    const testDocRef = doc(db, '_debug_test', testId);
+
+    // 1. Write Test Document
+    await setDoc(testDocRef, {
+      testId,
+      timestamp: new Date().toISOString(),
+      agent: 'Vercel Production Diagnostics'
+    });
+
+    // 2. Read-Back Test Document
+    const snap = await getDoc(testDocRef);
+    const readBackSuccess = snap.exists() && snap.data()?.testId === testId;
+
+    // 3. Delete Test Document
+    await deleteDoc(testDocRef);
+
+    return {
+      write: 'PASS',
+      readBack: readBackSuccess ? 'PASS' : 'FAIL',
+      delete: 'PASS',
+      latencyMs: Date.now() - start
+    };
   }
 };

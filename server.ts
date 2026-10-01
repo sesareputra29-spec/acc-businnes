@@ -19,8 +19,24 @@ app.use((req, res, next) => {
   next();
 });
 
-// File-backed persistence for server data
-const DATA_FILE = path.join(process.cwd(), '.app_data.json');
+// File-backed persistence for server data (with /tmp serverless support for Vercel)
+function getDataFilePath(): string {
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    const tmpFile = path.join('/tmp', '.app_data.json');
+    if (!fs.existsSync(tmpFile)) {
+      try {
+        const seedPath = path.join(process.cwd(), '.app_data.json');
+        if (fs.existsSync(seedPath)) {
+          fs.copyFileSync(seedPath, tmpFile);
+        }
+      } catch (e) {
+        console.warn('Could not seed tmp data file:', e);
+      }
+    }
+    return tmpFile;
+  }
+  return path.join(process.cwd(), '.app_data.json');
+}
 
 interface ServerData {
   orders: any[];
@@ -28,15 +44,21 @@ interface ServerData {
   lastUpdated: string;
 }
 
+let memoryCache: ServerData | null = null;
+
 function loadData(): ServerData {
+  const filePath = getDataFilePath();
   try {
-    if (fs.existsSync(DATA_FILE)) {
-      const raw = fs.readFileSync(DATA_FILE, 'utf-8');
-      return JSON.parse(raw);
+    if (fs.existsSync(filePath)) {
+      const raw = fs.readFileSync(filePath, 'utf-8');
+      const parsed = JSON.parse(raw);
+      memoryCache = parsed;
+      return parsed;
     }
   } catch (err) {
     console.error('Error loading data file:', err);
   }
+  if (memoryCache) return memoryCache;
   return {
     orders: [],
     notifications: [],
@@ -45,9 +67,11 @@ function loadData(): ServerData {
 }
 
 function saveData(data: ServerData) {
+  memoryCache = data;
+  const filePath = getDataFilePath();
   try {
     data.lastUpdated = new Date().toISOString();
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
   } catch (err) {
     console.error('Error saving data file:', err);
   }
@@ -531,4 +555,8 @@ async function startServer() {
   });
 }
 
-startServer();
+if (!process.env.VERCEL) {
+  startServer();
+}
+
+export default app;

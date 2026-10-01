@@ -147,17 +147,35 @@ export const StandaloneClientPortal: React.FC<Props> = ({
       }
     }
 
+    let retryCount = 0;
+    const isMobile = typeof navigator !== 'undefined' && /Mobi|Android|iPhone/i.test(navigator.userAgent);
+    
+    console.log('[REALTIME_INIT]', {
+      connectionType: 'HTTP Bidirectional Polling',
+      endpoint: '/api/portal/orders/:id',
+      status: 'initialized',
+      device: isMobile ? 'Mobile/HP' : 'Desktop/PC'
+    });
+
     // Direct fetch from server on mount for HP/mobile & incognito isolation support
     const fetchFromServer = async () => {
       try {
+        console.log('[REALTIME_CONNECTING]', { connectionType: 'HTTP Polling', endpoint: '/api/portal/orders', retryCount });
         const portalUrl = `/api/portal/orders/${encodeURIComponent(orderId.trim())}?token=${encodeURIComponent(portalToken)}`;
         let res = await fetch(portalUrl);
         if (!res.ok) {
           res = await fetch(`/api/orders/${encodeURIComponent(orderId.trim())}`);
         }
         if (res.ok && isMounted) {
+          console.log('[REALTIME_CONNECTED]', { connectionType: 'HTTP Polling', status: 'connected', orderId });
           const serverOrder: Order = await res.json();
           if (serverOrder) {
+            console.log('[REALTIME_MESSAGE]', {
+              type: 'initial_order_sync',
+              orderId,
+              isFormLocked: serverOrder.isFormLocked,
+              editRequestStatus: serverOrder.editRequestStatus
+            });
             setOrder(serverOrder);
             storageService.updateOrder(serverOrder);
             if (serverOrder.customerData) {
@@ -183,9 +201,11 @@ export const StandaloneClientPortal: React.FC<Props> = ({
               });
             }
           }
+        } else {
+          console.warn('[REALTIME_ERROR]', { connectionType: 'HTTP Polling', status: res.status, errorType: 'HTTP_' + res.status, retryCount: ++retryCount });
         }
-      } catch (e) {
-        // Fallback silently to local cache
+      } catch (e: any) {
+        console.warn('[REALTIME_ERROR]', { connectionType: 'HTTP Polling', errorType: e?.name || 'FetchError', retryCount: ++retryCount });
       }
     };
 
@@ -211,6 +231,7 @@ export const StandaloneClientPortal: React.FC<Props> = ({
           if (serverOrder) {
             setOrder((prev) => {
               if (prev.isFormLocked && !serverOrder.isFormLocked) {
+                console.log('[REALTIME_MESSAGE]', { type: 'form_unlocked_by_seller', orderId });
                 onShowToast('🎉 Izin Perubahan Disetujui! Formulir Anda telah dibuka oleh Seller. Silakan perbarui data.');
               }
               return serverOrder;
@@ -228,7 +249,8 @@ export const StandaloneClientPortal: React.FC<Props> = ({
             });
           }
         }
-      } catch {
+      } catch (err: any) {
+        console.log('[REALTIME_RECONNECT]', { connectionType: 'HTTP Polling', retryCount: ++retryCount, reason: err?.message || 'network_retry' });
         const latest = storageService.getOrderById(orderId);
         if (latest && isMounted) {
           setOrder(latest);
@@ -238,6 +260,7 @@ export const StandaloneClientPortal: React.FC<Props> = ({
 
     return () => {
       isMounted = false;
+      console.log('[REALTIME_DISCONNECTED]', { connectionType: 'HTTP Polling', status: 'closed' });
       unsubscribe();
       clearInterval(pollInterval);
     };

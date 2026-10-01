@@ -79,6 +79,10 @@ export const firestoreDb = {
 
   async saveOrder(order: Order): Promise<Order> {
     const cleanId = order.id.trim();
+    order.updatedAt = order.updatedAt || new Date().toISOString();
+    order.updatedBy = order.updatedBy || 'SELLER_ADMIN';
+    order.updatedSource = order.updatedSource || 'SELLER';
+
     const docRef = doc(db, ORDERS_COL, cleanId);
     const cleaned = cleanForFirestore(order);
     await setDoc(docRef, cleaned, { merge: true });
@@ -123,7 +127,10 @@ export const firestoreDb = {
         files: [],
         isFormLocked: isFormLocked ?? true,
         editRequestStatus: 'none',
-        customerSubmittedAt: now.toISOString()
+        customerSubmittedAt: now.toISOString(),
+        updatedAt: now.toISOString(),
+        updatedBy: 'HP_CLIENT',
+        updatedSource: 'CLIENT_PORTAL'
       };
     } else {
       existing.customerData = customerData;
@@ -131,6 +138,9 @@ export const firestoreDb = {
       if (isFormLocked !== undefined) existing.isFormLocked = isFormLocked;
       existing.editRequestStatus = 'none';
       existing.customerSubmittedAt = now.toISOString();
+      existing.updatedAt = now.toISOString();
+      existing.updatedBy = 'HP_CLIENT';
+      existing.updatedSource = 'CLIENT_PORTAL';
     }
 
     const docRef = doc(db, ORDERS_COL, cleanId);
@@ -188,11 +198,17 @@ export const firestoreDb = {
         isFormLocked: true,
         editRequestStatus: 'requested',
         editRequestReason: reason || 'Klien ingin memperbarui data profil/pengalaman',
-        customerSubmittedAt: now.toISOString()
+        customerSubmittedAt: now.toISOString(),
+        updatedAt: now.toISOString(),
+        updatedBy: 'HP_CLIENT',
+        updatedSource: 'CLIENT_PORTAL'
       };
     } else {
       order.editRequestStatus = 'requested';
       order.editRequestReason = reason || 'Klien ingin memperbarui data profil/pengalaman';
+      order.updatedAt = now.toISOString();
+      order.updatedBy = 'HP_CLIENT';
+      order.updatedSource = 'CLIENT_PORTAL';
     }
 
     const docRef = doc(db, ORDERS_COL, cleanId);
@@ -229,8 +245,12 @@ export const firestoreDb = {
       throw new Error(`Order ${cleanId} not found`);
     }
 
+    const now = new Date();
     order.isFormLocked = false;
     order.editRequestStatus = 'approved';
+    order.updatedAt = now.toISOString();
+    order.updatedBy = 'SELLER_ADMIN';
+    order.updatedSource = 'SELLER';
 
     const docRef = doc(db, ORDERS_COL, cleanId);
     await setDoc(docRef, cleanForFirestore(order), { merge: true });

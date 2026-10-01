@@ -1,79 +1,82 @@
 {
   "orders": [
     {
+      "marketplaceOrderId": "24051887KJ92X1",
+      "editRequestReason": "Klien meminta pembaruan data via HP",
+      "paymentStatus": "Lunas",
+      "status": "Data Masuk",
+      "orderDate": "2025-05-18T09:15:00Z",
+      "files": [
+        {
+          "version": 1,
+          "uploadedAt": "2025-05-18T12:00:00Z",
+          "fileType": "pdf",
+          "stage": "Draft",
+          "fileSize": "342 KB",
+          "id": "FIL-1",
+          "fileName": "ORD-2025-001284_Bagas_Aditya_CV_ATS_V1_Draft.pdf"
+        },
+        {
+          "uploadedAt": "2025-05-18T16:30:00Z",
+          "fileType": "pdf",
+          "id": "FIL-2",
+          "fileSize": "356 KB",
+          "stage": "Preview",
+          "version": 2,
+          "fileName": "ORD-2025-001284_Bagas_Aditya_CV_ATS_V2_Preview.pdf"
+        }
+      ],
+      "templateId": "TMP-ATS-01",
+      "productType": "Paket Komplit (CV + Portfolio + CL)",
+      "variation": "Bahasa Indonesia & English (Dual)",
+      "customerPhone": "081298443210",
+      "isFormLocked": true,
+      "priority": "Tinggi",
+      "customerName": "Bagas Aditya Pratama",
+      "price": 189000,
+      "id": "ORD-2025-001284",
+      "customerSubmittedAt": "2026-10-01T04:48:17.211Z",
+      "deadlineDate": "2025-05-20T17:00:00Z",
+      "revisions": [
+        {
+          "id": "REV-1",
+          "clientNotes": "Mohon tambahkan sertifikasi AWS dan highlight pengalaman project di LinkAja.",
+          "status": "Selesai",
+          "requestedAt": "2025-05-18T14:00:00Z",
+          "operatorNotes": "Sudah diakomodasi di draft V2.",
+          "completedAt": "2025-05-18T16:20:00Z",
+          "version": 1
+        }
+      ],
+      "customerFormSlug": "form-ord-2025-001284",
+      "editRequestStatus": "none",
+      "internalNotes": "Customer minta prioritas sebelum interview hari Rabu jam 10 pagi.",
       "customerData": {
-        "fullName": "Bagas Aditya Pratama, S.Kom., M.Cs. (Final Update)",
         "skills": [],
-        "email": "bagas.aditya@gmail.com",
-        "summary": "Senior Software Engineer with 6+ years experience.",
-        "educations": [],
         "experiences": [
           {
-            "isCurrent": true,
-            "company": "PT Fintek Karya Nusantara (LinkAja)",
             "bulletPoints": [
               "Architecture modernization"
             ],
             "position": "Lead Frontend Engineer",
+            "isCurrent": true,
             "startDate": "2022-03",
+            "company": "PT Fintek Karya Nusantara (LinkAja)",
             "id": "EXP-1"
           }
         ],
-        "phone": "0812-9844-3210"
+        "educations": [],
+        "email": "bagas.aditya@gmail.com",
+        "phone": "0812-9844-3210",
+        "fullName": "Bagas Aditya Pratama (TRACE_TEST_1790830097152)",
+        "summary": "Senior Software Engineer with 6+ years experience."
       },
-      "paymentStatus": "Lunas",
-      "customerSubmittedAt": "2026-10-01T04:25:08.824Z",
       "marketplace": "Shopee",
       "customerEmail": "bagas.aditya@gmail.com",
-      "templateId": "TMP-ATS-01",
       "assignedStaffId": "STF-003",
-      "customerFormSlug": "form-ord-2025-001284",
-      "productType": "Paket Komplit (CV + Portfolio + CL)",
-      "orderDate": "2025-05-18T09:15:00Z",
-      "priority": "Tinggi",
-      "internalNotes": "Customer minta prioritas sebelum interview hari Rabu jam 10 pagi.",
-      "revisions": [
-        {
-          "status": "Selesai",
-          "clientNotes": "Mohon tambahkan sertifikasi AWS dan highlight pengalaman project di LinkAja.",
-          "operatorNotes": "Sudah diakomodasi di draft V2.",
-          "completedAt": "2025-05-18T16:20:00Z",
-          "version": 1,
-          "requestedAt": "2025-05-18T14:00:00Z",
-          "id": "REV-1"
-        }
-      ],
-      "isFormLocked": true,
-      "variation": "Bahasa Indonesia & English (Dual)",
-      "status": "Data Masuk",
-      "customerName": "Bagas Aditya Pratama",
-      "customerPhone": "081298443210",
-      "files": [
-        {
-          "stage": "Draft",
-          "version": 1,
-          "uploadedAt": "2025-05-18T12:00:00Z",
-          "fileSize": "342 KB",
-          "fileName": "ORD-2025-001284_Bagas_Aditya_CV_ATS_V1_Draft.pdf",
-          "id": "FIL-1",
-          "fileType": "pdf"
-        },
-        {
-          "id": "FIL-2",
-          "version": 2,
-          "fileType": "pdf",
-          "uploadedAt": "2025-05-18T16:30:00Z",
-          "fileName": "ORD-2025-001284_Bagas_Aditya_CV_ATS_V2_Preview.pdf",
-          "fileSize": "356 KB",
-          "stage": "Preview"
-        }
-      ],
-      "id": "ORD-2025-001284",
-      "deadlineDate": "2025-05-20T17:00:00Z",
-      "editRequestReason": "Klien meminta pembaruan data via HP",
-      "marketplaceOrderId": "24051887KJ92X1",
-      "price": 189000,
-      "editRequestStatus": "none"
+      "updatedAt": "2026-10-01T04:48:17.211Z",
+      "updatedBy": "HP_CLIENT",
+      "updatedSource": "CLIENT_PORTAL"
     },
     {
       "id": "ORD-2025-001285",
@@ -1198,6 +1201,17 @@
   ],
   "notifications": [
     {
+      "id": "NOTIF-1790830097359",
+      "orderId": "ORD-2025-001284",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien Bagas Aditya Pratama telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2025-001284 (Paket Komplit (CV + Portfolio + CL)).",
+      "timestamp": "2026-10-01T04:48:17.211Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
       "id": "NOTIF-1790828708889",
       "orderId": "ORD-2025-001284",
       "type": "form_submitted",
@@ -1649,5 +1663,5 @@
       "productType": "Paket Komplit (CV + Portfolio + CL)"
     }
   ],
-  "lastUpdated": "2026-10-01T04:25:08.940Z"
+  "lastUpdated": "2026-10-01T04:48:17.438Z"
 }

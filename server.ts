@@ -215,30 +215,33 @@ const handlePutCustomerData = async (req: express.Request, res: express.Response
   const cleanId = (req.params.id || '').trim();
   const token = (req.query.token as string) || (req.body.token as string) || '';
   
-  console.log('[VERCEL_PORTAL_WRITE_START]', {
+  console.log('[TRACE_CLIENT_SUBMIT]', {
     orderId: cleanId,
-    method: 'PUT',
+    timestamp: new Date().toISOString(),
+    updatedSource: 'CLIENT_PORTAL',
     contentType: req.headers['content-type'],
     userAgent: (req.headers['user-agent'] || '').slice(0, 50)
   });
 
   const isAuth = verifyPortalToken(cleanId, token);
   if (!isAuth) {
-    console.warn('[VERCEL_PORTAL_WRITE_ERROR]', { orderId: cleanId, error: 'Token formulir tidak valid', status: 403 });
+    console.warn('[TRACE_CLIENT_SUBMIT_ERROR]', { orderId: cleanId, error: 'Token formulir tidak valid', status: 403 });
     return res.status(403).json({ error: 'Token formulir tidak valid' });
   }
 
   const { customerData, status, isFormLocked } = req.body;
 
   try {
-    console.log('[VERCEL_FIRESTORE_WRITE]', { orderId: cleanId });
     // 1. Write to Persistent Cloud Firestore Database with Read-Back verification
     const result = await firestoreDb.saveCustomerData(cleanId, customerData, status, isFormLocked);
 
-    console.log('[VERCEL_FIRESTORE_READBACK]', {
+    console.log('[TRACE_CLIENT_SUBMIT_SUCCESS]', {
       orderId: cleanId,
+      updatedAt: result.order.updatedAt,
+      updatedSource: result.order.updatedSource,
       verifiedName: result.order.customerData?.fullName || result.order.customerName,
-      verifiedStatus: result.order.status
+      verifiedStatus: result.order.status,
+      notificationId: result.notification.id
     });
 
     // 2. Also mirror to local seed for offline dev redundancy
@@ -252,17 +255,9 @@ const handlePutCustomerData = async (req: express.Request, res: express.Response
     seed.notifications.unshift(result.notification);
     saveLocalSeed(seed);
 
-    console.log('[VERCEL_PORTAL_WRITE_SUCCESS]', {
-      orderId: cleanId,
-      orderStatus: result.order.status,
-      isFormLocked: result.order.isFormLocked,
-      notificationId: result.notification.id,
-      verified: true
-    });
-
     res.json({ success: true, order: result.order, notification: result.notification });
   } catch (err: any) {
-    console.error('[VERCEL_PORTAL_WRITE_ERROR]', { orderId: cleanId, error: err?.message || String(err), status: 500 });
+    console.error('[TRACE_CLIENT_SUBMIT_ERROR]', { orderId: cleanId, error: err?.message || String(err), status: 500 });
     res.status(500).json({ error: 'Gagal menyimpan data ke persistent database' });
   }
 };
@@ -275,34 +270,31 @@ const handlePostRequestEdit = async (req: express.Request, res: express.Response
   const cleanId = (req.params.id || '').trim();
   const token = (req.query.token as string) || (req.body.token as string) || '';
 
-  console.log('[VERCEL_EDIT_START]', {
+  console.log('[TRACE_EDIT_REQUEST]', {
     orderId: cleanId,
-    method: 'POST',
+    timestamp: new Date().toISOString(),
+    updatedSource: 'CLIENT_PORTAL',
     contentType: req.headers['content-type'],
     userAgent: (req.headers['user-agent'] || '').slice(0, 50)
   });
 
   const isAuth = verifyPortalToken(cleanId, token);
   if (!isAuth) {
-    console.warn('[VERCEL_EDIT_ERROR]', { orderId: cleanId, error: 'Token formulir tidak valid', status: 403 });
+    console.warn('[TRACE_EDIT_REQUEST_ERROR]', { orderId: cleanId, error: 'Token formulir tidak valid', status: 403 });
     return res.status(403).json({ error: 'Token formulir tidak valid' });
   }
 
   const { reason } = req.body;
 
   try {
-    console.log('[VERCEL_EDIT_ORDER_WRITE]', { orderId: cleanId, reason: reason?.slice(0, 50) });
     // 1. Write to Persistent Cloud Firestore Database with Read-Back verification
     const result = await firestoreDb.requestEdit(cleanId, reason);
 
-    console.log('[VERCEL_EDIT_NOTIFICATION_WRITE]', {
+    console.log('[TRACE_EDIT_REQUEST_SUCCESS]', {
       orderId: cleanId,
       notificationId: result.notification.id,
-      title: result.notification.title
-    });
-
-    console.log('[VERCEL_EDIT_READBACK]', {
-      orderId: cleanId,
+      timestamp: result.order.updatedAt,
+      updatedSource: result.order.updatedSource,
       verifiedEditStatus: result.order.editRequestStatus
     });
 
@@ -317,16 +309,9 @@ const handlePostRequestEdit = async (req: express.Request, res: express.Response
     seed.notifications.unshift(result.notification);
     saveLocalSeed(seed);
 
-    console.log('[VERCEL_EDIT_SUCCESS]', {
-      orderId: cleanId,
-      editRequestStatus: result.order.editRequestStatus,
-      notificationId: result.notification.id,
-      verified: true
-    });
-
     res.json({ success: true, order: result.order, notification: result.notification });
   } catch (err: any) {
-    console.error('[VERCEL_EDIT_ERROR]', { orderId: cleanId, error: err?.message || String(err), status: 500 });
+    console.error('[TRACE_EDIT_REQUEST_ERROR]', { orderId: cleanId, error: err?.message || String(err), status: 500 });
     res.status(500).json({ error: 'Gagal memproses permintaan ubah data ke database' });
   }
 };
@@ -337,9 +322,22 @@ app.post('/portal/orders/:id/request-edit', handlePostRequestEdit);
 // SELLER APPROVES EDIT / UNLOCKS FORM (WITH READ-BACK VERIFICATION)
 app.post('/api/orders/:id/approve-edit', async (req, res) => {
   const cleanId = (req.params.id || '').trim();
+  console.log('[TRACE_APPROVAL_WRITE]', {
+    orderId: cleanId,
+    timestamp: new Date().toISOString(),
+    updatedSource: 'SELLER'
+  });
+
   try {
     const result = await firestoreDb.approveEdit(cleanId);
     
+    console.log('[TRACE_APPROVAL_WRITE_SUCCESS]', {
+      orderId: cleanId,
+      editRequestStatus: result.order.editRequestStatus,
+      isFormLocked: result.order.isFormLocked,
+      timestamp: result.order.updatedAt
+    });
+
     // Mirror to local seed
     const seed = loadLocalSeed();
     const idx = seed.orders.findIndex(o => o.id === cleanId);
@@ -351,13 +349,19 @@ app.post('/api/orders/:id/approve-edit', async (req, res) => {
 
     res.json({ success: true, order: result.order, notification: result.notification });
   } catch (err: any) {
-    console.error('[APPROVE_EDIT_ERROR]', err);
+    console.error('[TRACE_APPROVAL_WRITE_ERROR]', err);
     res.status(500).json({ error: err?.message || 'Gagal menyetujui perubahan data' });
   }
 });
 
-// GET ALL ORDERS (SELLER)
+// GET ALL ORDERS (SELLER READ)
 app.get('/api/orders', async (req, res) => {
+  console.log('[TRACE_SELLER_LOAD]', {
+    timestamp: new Date().toISOString(),
+    action: 'READ_ONLY',
+    target: 'Cloud Firestore orders collection'
+  });
+
   try {
     let orders = await firestoreDb.getOrders();
     if (orders.length === 0) {
@@ -414,12 +418,15 @@ app.post('/api/orders', async (req, res) => {
   }
 });
 
-// POST BATCH SYNC ORDERS
+// POST BATCH SYNC ORDERS (Safe: only inserts non-existing orders, never overwrites existing modified orders)
 app.post('/api/orders/batch-sync', async (req, res) => {
   const incomingOrders = req.body.orders || [];
   try {
     for (const ord of incomingOrders) {
-      await firestoreDb.saveOrder(ord);
+      const existing = await firestoreDb.getOrderById(ord.id);
+      if (!existing) {
+        await firestoreDb.saveOrder(ord);
+      }
     }
     const current = await firestoreDb.getOrders();
     res.json({ success: true, count: current.length });
@@ -428,8 +435,14 @@ app.post('/api/orders/batch-sync', async (req, res) => {
   }
 });
 
-// GET ALL NOTIFICATIONS (SELLER)
+// GET ALL NOTIFICATIONS (SELLER READ)
 app.get('/api/notifications', async (req, res) => {
+  console.log('[TRACE_NOTIFICATION_READ]', {
+    timestamp: new Date().toISOString(),
+    action: 'READ_ONLY',
+    target: 'Cloud Firestore notifications collection'
+  });
+
   try {
     let notifs = await firestoreDb.getNotifications();
     if (notifs.length === 0) {

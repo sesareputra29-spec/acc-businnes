@@ -222,6 +222,9 @@ export interface Order {
   isFormLocked?: boolean;
   editRequestStatus?: 'none' | 'requested' | 'approved';
   editRequestReason?: string;
+  updatedAt?: string;
+  updatedBy?: string;
+  updatedSource?: 'CLIENT_PORTAL' | 'SELLER' | 'SYSTEM';
 }
 
 export interface ShopeeProduct {

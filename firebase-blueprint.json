@@ -1,0 +1,59 @@
+{
+  "entities": {
+    "Order": {
+      "title": "Order",
+      "description": "Order entity containing customer profile, career documents, workflow status, and edit request state",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "productType": { "type": "string" },
+        "variation": { "type": "string" },
+        "marketplaceOrderId": { "type": "string" },
+        "templateId": { "type": "string" },
+        "marketplace": { "type": "string" },
+        "orderDate": { "type": "string" },
+        "deadlineDate": { "type": "string" },
+        "status": { "type": "string" },
+        "priority": { "type": "string" },
+        "paymentStatus": { "type": "string" },
+        "price": { "type": "number" },
+        "customerData": { "type": "object" },
+        "isFormLocked": { "type": "boolean" },
+        "editRequestStatus": { "type": "string" },
+        "editRequestReason": { "type": "string" },
+        "customerSubmittedAt": { "type": "string" }
+      },
+      "required": ["id", "customerName", "productType", "status"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "Application real-time notification entity",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderId": { "type": "string" },
+        "type": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "isRead": { "type": "boolean" },
+        "customerName": { "type": "string" },
+        "productType": { "type": "string" }
+      },
+      "required": ["id", "type", "title", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Collection of all customer orders and workflow records"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "Collection of real-time application and order notifications"
+    }
+  }
+}

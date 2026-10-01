@@ -1,64 +1,79 @@
 {
   "orders": [
     {
-      "id": "ORD-2025-001284",
-      "marketplace": "Shopee",
-      "marketplaceOrderId": "24051887KJ92X1",
-      "customerName": "Bagas Aditya Pratama",
-      "customerPhone": "081298443210",
-      "customerEmail": "bagas.aditya@gmail.com",
-      "productType": "Paket Komplit (CV + Portfolio + CL)",
-      "variation": "Bahasa Indonesia & English (Dual)",
-      "price": 189000,
-      "orderDate": "2025-05-18T09:15:00Z",
-      "deadlineDate": "2025-05-20T17:00:00Z",
-      "paymentStatus": "Lunas",
-      "status": "Data Masuk",
-      "priority": "Tinggi",
-      "templateId": "TMP-ATS-01",
-      "assignedStaffId": "STF-003",
       "customerData": {
-        "fullName": "Bagas Aditya Pratama (Confirmed on PC)",
+        "fullName": "Bagas Aditya Pratama, S.Kom., M.Cs. (Final Update)",
+        "skills": [],
         "email": "bagas.aditya@gmail.com",
+        "summary": "Senior Software Engineer with 6+ years experience.",
+        "educations": [],
+        "experiences": [
+          {
+            "isCurrent": true,
+            "company": "PT Fintek Karya Nusantara (LinkAja)",
+            "bulletPoints": [
+              "Architecture modernization"
+            ],
+            "position": "Lead Frontend Engineer",
+            "startDate": "2022-03",
+            "id": "EXP-1"
+          }
+        ],
         "phone": "0812-9844-3210"
       },
+      "paymentStatus": "Lunas",
+      "customerSubmittedAt": "2026-10-01T04:25:08.824Z",
+      "marketplace": "Shopee",
+      "customerEmail": "bagas.aditya@gmail.com",
+      "templateId": "TMP-ATS-01",
+      "assignedStaffId": "STF-003",
       "customerFormSlug": "form-ord-2025-001284",
-      "customerSubmittedAt": "2026-10-01T03:00:33.128Z",
+      "productType": "Paket Komplit (CV + Portfolio + CL)",
+      "orderDate": "2025-05-18T09:15:00Z",
+      "priority": "Tinggi",
+      "internalNotes": "Customer minta prioritas sebelum interview hari Rabu jam 10 pagi.",
       "revisions": [
         {
-          "id": "REV-1",
-          "version": 1,
-          "requestedAt": "2025-05-18T14:00:00Z",
+          "status": "Selesai",
           "clientNotes": "Mohon tambahkan sertifikasi AWS dan highlight pengalaman project di LinkAja.",
           "operatorNotes": "Sudah diakomodasi di draft V2.",
-          "status": "Selesai",
-          "completedAt": "2025-05-18T16:20:00Z"
+          "completedAt": "2025-05-18T16:20:00Z",
+          "version": 1,
+          "requestedAt": "2025-05-18T14:00:00Z",
+          "id": "REV-1"
         }
       ],
+      "isFormLocked": true,
+      "variation": "Bahasa Indonesia & English (Dual)",
+      "status": "Data Masuk",
+      "customerName": "Bagas Aditya Pratama",
+      "customerPhone": "081298443210",
       "files": [
         {
-          "id": "FIL-1",
-          "fileName": "ORD-2025-001284_Bagas_Aditya_CV_ATS_V1_Draft.pdf",
           "stage": "Draft",
           "version": 1,
           "uploadedAt": "2025-05-18T12:00:00Z",
           "fileSize": "342 KB",
+          "fileName": "ORD-2025-001284_Bagas_Aditya_CV_ATS_V1_Draft.pdf",
+          "id": "FIL-1",
           "fileType": "pdf"
         },
         {
           "id": "FIL-2",
-          "fileName": "ORD-2025-001284_Bagas_Aditya_CV_ATS_V2_Preview.pdf",
-          "stage": "Preview",
           "version": 2,
+          "fileType": "pdf",
           "uploadedAt": "2025-05-18T16:30:00Z",
+          "fileName": "ORD-2025-001284_Bagas_Aditya_CV_ATS_V2_Preview.pdf",
           "fileSize": "356 KB",
-          "fileType": "pdf"
+          "stage": "Preview"
         }
       ],
-      "internalNotes": "Customer minta prioritas sebelum interview hari Rabu jam 10 pagi.",
-      "editRequestStatus": "requested",
-      "editRequestReason": "Klien dari PC ingin revisi",
-      "isFormLocked": true
+      "id": "ORD-2025-001284",
+      "deadlineDate": "2025-05-20T17:00:00Z",
+      "editRequestReason": "Klien meminta pembaruan data via HP",
+      "marketplaceOrderId": "24051887KJ92X1",
+      "price": 189000,
+      "editRequestStatus": "none"
     },
     {
       "id": "ORD-2025-001285",
@@ -742,15 +757,11 @@
         "id": "CUST-ORD-2026-001295",
         "fullName": "Bambang Sudarmono, S.T.",
         "professionalTitle": "",
-        "email": "klien@gmail.com",
+        "email": "",
         "phone": "0857-4433-2211",
         "city": "",
         "country": "Indonesia",
         "summary": "",
-        "targetJobTitle": "",
-        "targetCompany": "",
-        "jobVacancySource": "",
-        "coverLetterNotes": "",
         "educations": [],
         "experiences": [],
         "skills": [
@@ -1187,6 +1198,94 @@
   ],
   "notifications": [
     {
+      "id": "NOTIF-1790828708889",
+      "orderId": "ORD-2025-001284",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien Bagas Aditya Pratama telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2025-001284 (Paket Komplit (CV + Portfolio + CL)).",
+      "timestamp": "2026-10-01T04:25:08.824Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790828708672",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_approved",
+      "title": "🔓 Izin Edit Disetujui",
+      "message": "Formulir pesanan ORD-2025-001284 (Bagas Aditya Pratama) telah dibuka kuncinya.",
+      "timestamp": "2026-10-01T04:25:08.672Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790828708403",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_requested",
+      "title": "🔔 Permintaan Ubah Data dari HP/Klien",
+      "message": "Klien Bagas Aditya Pratama (#ORD-2025-001284) meminta izin ubah data: \"Klien meminta pembaruan data via HP\".",
+      "timestamp": "2026-10-01T04:25:08.305Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790828708086",
+      "orderId": "ORD-2025-001284",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien Bagas Aditya Pratama telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2025-001284 (Paket Komplit (CV + Portfolio + CL)).",
+      "timestamp": "2026-10-01T04:25:07.935Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790828624748",
+      "orderId": "ORD-2025-001284",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien Bagas Aditya Pratama telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2025-001284 (Paket Komplit (CV + Portfolio + CL)).",
+      "timestamp": "2026-10-01T04:23:44.689Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790828624510",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_approved",
+      "title": "🔓 Izin Edit Disetujui",
+      "message": "Formulir pesanan ORD-2025-001284 (Bagas Aditya Pratama) telah dibuka kuncinya.",
+      "timestamp": "2026-10-01T04:23:44.510Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790828624050",
+      "orderId": "ORD-2025-001284",
+      "type": "edit_requested",
+      "title": "🔔 Permintaan Ubah Data dari HP/Klien",
+      "message": "Klien Bagas Aditya Pratama (#ORD-2025-001284) meminta izin ubah data: \"Klien ingin update data riwayat organisasi terbaru dari HP\".",
+      "timestamp": "2026-10-01T04:23:41.886Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
+      "id": "NOTIF-1790828621636",
+      "orderId": "ORD-2025-001284",
+      "type": "form_submitted",
+      "title": "📥 Data Formulir Masuk (HP/Client)",
+      "message": "Klien Bagas Aditya Pratama telah melengkapi dan mengirimkan data formulir untuk pesanan ORD-2025-001284 (Paket Komplit (CV + Portfolio + CL)).",
+      "timestamp": "2026-10-01T04:23:41.473Z",
+      "isRead": false,
+      "customerName": "Bagas Aditya Pratama",
+      "productType": "Paket Komplit (CV + Portfolio + CL)"
+    },
+    {
       "id": "NOTIF-1790823633343",
       "orderId": "ORD-2025-001284",
       "type": "edit_requested",
@@ -1550,5 +1649,5 @@
       "productType": "Paket Komplit (CV + Portfolio + CL)"
     }
   ],
-  "lastUpdated": "2026-10-01T03:00:33.343Z"
+  "lastUpdated": "2026-10-01T04:25:08.940Z"
 }
